@@ -71,7 +71,7 @@ class Preload {
     return buffer.toString();
   }
 
-  static Map<String, dynamic> extractPreLoadedMap(
+  static Map<String, dynamic>? extractPreLoadedMap(
       String table, Map<String, dynamic> map) {
     final Map<String, dynamic> extracted = <String, dynamic>{};
 
@@ -83,7 +83,7 @@ class Preload {
             key.substring(table.length + 2, key.length), () => map[key]);
       }
     }
-    return extracted.isNotEmpty ? extracted : <String, dynamic>{};
+    return extracted.isNotEmpty ? extracted : null;
   }
 
   List<String> _aliasColumns(List<String> columns, {String? prefix}) {

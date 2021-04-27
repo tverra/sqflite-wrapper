@@ -288,7 +288,7 @@ void main() {
         '_table_col': 2
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table', map);
 
       expect(extracted, <String, dynamic>{'col': 2});
@@ -304,7 +304,7 @@ void main() {
         '_table_col3': 6,
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table', map);
 
       expect(extracted, <String, dynamic>{'col1': 4, 'col2': 5, 'col3': 6});
@@ -332,26 +332,26 @@ void main() {
       });
     });
 
-    test('returns empty map if map is empty', () {
+    test('returns null if map is empty', () {
       final Map<String, dynamic> map = <String, dynamic>{};
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, <String, dynamic>{});
+      expect(extracted, null);
     });
 
-    test('returns empty map if no preloaded values', () {
-      final Map<String, dynamic> map = <String, dynamic>{
+    test('returns null if no preloaded values', () {
+      final Map<String, dynamic> map = {
         'col1': 1,
         'col2': 2,
         'col3': 3,
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, <String, dynamic>{});
+      expect(extracted, null);
     });
 
     test('extracts only from correct table', () {
@@ -364,7 +364,7 @@ void main() {
         '_table3_col3': 6,
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table2', map);
 
       expect(extracted, <String, dynamic>{'col2': 5});
@@ -380,7 +380,7 @@ void main() {
         '_table_col3': 6,
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('table', map);
 
       expect(extracted, <String, dynamic>{'col3': 6});
@@ -409,7 +409,7 @@ void main() {
         '_t_': 18,
       };
 
-      final Map<String, dynamic> extracted =
+      final Map<String, dynamic>? extracted =
           Preload.extractPreLoadedMap('t', map);
 
       expect(extracted, <String, dynamic>{'_col1': 11, 'col4': 14});
