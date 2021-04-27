@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('custom function can be set in constructor', () {
       final SqfFunction function = SqfFunction('WHATEVER(param)');

@@ -342,7 +342,7 @@ void main() {
     });
 
     test('returns null if no preloaded values', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
