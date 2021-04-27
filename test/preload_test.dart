@@ -2,10 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
 void main() {
-  List<String> _parentColumns;
+  late List<String> _parentColumns;
 
   setUp(() async {
-    _parentColumns = ['parent_column1', 'parent_column2', 'parent_column3'];
+    _parentColumns = <String>[
+      'parent_column1',
+      'parent_column2',
+      'parent_column3',
+    ];
   });
 
   group('constructor', () {
@@ -16,7 +20,7 @@ void main() {
 
     test('columns are initially empty list', () {
       final Preload preload = Preload();
-      expect(preload.columns, []);
+      expect(preload.columns, <String>[]);
     });
 
     test('columns string is initially empty string', () {
@@ -161,7 +165,7 @@ void main() {
         _parentColumns,
       );
 
-      expect(preload.columns, [
+      expect(preload.columns, <String>[
         'parent_table_name.parent_column1 AS _parent_table_name_parent_column1',
         'parent_table_name.parent_column2 AS _parent_table_name_parent_column2',
         'parent_table_name.parent_column3 AS _parent_table_name_parent_column3',
@@ -213,25 +217,16 @@ void main() {
         _parentColumns,
       );
 
-      expect(preload.columns, [
-        'parent_table_name1.parent_column1 AS '
-            '_parent_table_name1_parent_column1',
-        'parent_table_name1.parent_column2 AS '
-            '_parent_table_name1_parent_column2',
-        'parent_table_name1.parent_column3 AS '
-            '_parent_table_name1_parent_column3',
-        'parent_table_name2.parent_column1 AS '
-            '_parent_table_name2_parent_column1',
-        'parent_table_name2.parent_column2 AS '
-            '_parent_table_name2_parent_column2',
-        'parent_table_name2.parent_column3 AS '
-            '_parent_table_name2_parent_column3',
-        'parent_table_name3.parent_column1 AS '
-            '_parent_table_name3_parent_column1',
-        'parent_table_name3.parent_column2 AS '
-            '_parent_table_name3_parent_column2',
-        'parent_table_name3.parent_column3 AS '
-            '_parent_table_name3_parent_column3'
+      expect(preload.columns, <String>[
+        'parent_table_name1.parent_column1 AS _parent_table_name1_parent_column1',
+        'parent_table_name1.parent_column2 AS _parent_table_name1_parent_column2',
+        'parent_table_name1.parent_column3 AS _parent_table_name1_parent_column3',
+        'parent_table_name2.parent_column1 AS _parent_table_name2_parent_column1',
+        'parent_table_name2.parent_column2 AS _parent_table_name2_parent_column2',
+        'parent_table_name2.parent_column3 AS _parent_table_name2_parent_column3',
+        'parent_table_name3.parent_column1 AS _parent_table_name3_parent_column1',
+        'parent_table_name3.parent_column2 AS _parent_table_name3_parent_column2',
+        'parent_table_name3.parent_column3 AS _parent_table_name3_parent_column3'
       ]);
     });
 
@@ -288,16 +283,19 @@ void main() {
 
   group('extractPreloadedMap', () {
     test('extracts preloaded value', () {
-      final Map<String, dynamic> map = {'col': 1, '_table_col': 2};
+      final Map<String, dynamic> map = <String, dynamic>{
+        'col': 1,
+        '_table_col': 2
+      };
 
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, {'col': 2});
+      expect(extracted, <String, dynamic>{'col': 2});
     });
 
     test('extracts multiple preloaded values', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -309,11 +307,11 @@ void main() {
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, {'col1': 4, 'col2': 5, 'col3': 6});
+      expect(extracted, <String, dynamic>{'col1': 4, 'col2': 5, 'col3': 6});
     });
 
     test('original map is not changed', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -324,7 +322,7 @@ void main() {
 
       Preload.extractPreLoadedMap('table', map);
 
-      expect(map, {
+      expect(map, <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -334,26 +332,17 @@ void main() {
       });
     });
 
-    test('returns null if map is null', () {
-      final Map<String, dynamic> map = null;
+    test('returns empty map if map is empty', () {
+      final Map<String, dynamic> map = <String, dynamic>{};
 
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, null);
+      expect(extracted, <String, dynamic>{});
     });
 
-    test('returns null if map is empty', () {
-      final Map<String, dynamic> map = {};
-
-      final Map<String, dynamic> extracted =
-          Preload.extractPreLoadedMap('table', map);
-
-      expect(extracted, null);
-    });
-
-    test('returns null if no preloaded values', () {
-      final Map<String, dynamic> map = {
+    test('returns empty map if no preloaded values', () {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -362,11 +351,11 @@ void main() {
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, null);
+      expect(extracted, <String, dynamic>{});
     });
 
     test('extracts only from correct table', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -378,11 +367,11 @@ void main() {
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table2', map);
 
-      expect(extracted, {'col2': 5});
+      expect(extracted, <String, dynamic>{'col2': 5});
     });
 
     test('expects underline before and after table name', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         'col1': 1,
         'col2': 2,
         'col3': 3,
@@ -394,11 +383,11 @@ void main() {
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('table', map);
 
-      expect(extracted, {'col3': 6});
+      expect(extracted, <String, dynamic>{'col3': 6});
     });
 
     test('extracts correct columns', () {
-      final Map<String, dynamic> map = {
+      final Map<String, dynamic> map = <String, dynamic>{
         '': 0,
         'a': 1,
         'aa': 2,
@@ -416,7 +405,6 @@ void main() {
         '_t_col4': 14,
         '_t1_col5': 15,
         '_t_col6': null,
-        null: 16,
         '17': null,
         '_t_': 18,
       };
@@ -424,7 +412,7 @@ void main() {
       final Map<String, dynamic> extracted =
           Preload.extractPreLoadedMap('t', map);
 
-      expect(extracted, {'_col1': 11, 'col4': 14});
+      expect(extracted, <String, dynamic>{'_col1': 11, 'col4': 14});
     });
   });
 }

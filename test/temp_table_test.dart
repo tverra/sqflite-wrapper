@@ -3,7 +3,7 @@ import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
 import 'helpers/mock_classes.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('creating temp table creates create-statement from identifier', () {
       final TempTable tempTable = TempTable('test_test');
@@ -32,16 +32,16 @@ main() {
 
   group('insertValues', () {
     test('test', () {
+      const String insertStatement =
+          'INSERT INTO temp._temp_table_test_test VALUES (?)';
       final MockBatch batch = MockBatch();
       final TempTable tempTable = TempTable('test_test');
-      final String insertStatement =
-          'INSERT INTO temp._temp_table_test_test VALUES (?)';
 
-      tempTable.insertValues(batch, [1, 2, 3]);
+      tempTable.insertValues(batch, <int>[1, 2, 3]);
 
       expect(batch.statements,
-          [insertStatement, insertStatement, insertStatement]);
-      expect(batch.arguments, [1, 2, 3]);
+          <String>[insertStatement, insertStatement, insertStatement]);
+      expect(batch.arguments, <int>[1, 2, 3]);
     });
   });
 }

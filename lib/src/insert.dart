@@ -9,29 +9,30 @@ class Insert {
     'OR REPLACE'
   ];
 
-  String _sql;
-  List _args;
+  late final String sql;
+  late final List<dynamic> args;
 
   Insert(
     String table,
     Map<String, dynamic> values, {
-    String nullColumnHack,
-    ConflictAlgorithm conflictAlgorithm,
-    Where rowIdConstraint,
-    List<String> upsertConflictValues,
-    Update upsertAction,
+    String? nullColumnHack,
+    ConflictAlgorithm? conflictAlgorithm,
+    Where? rowIdConstraint,
+    List<String>? upsertConflictValues,
+    Update? upsertAction,
   }) {
-    if ((upsertConflictValues != null || upsertAction != null)) {
+    if (upsertConflictValues != null || upsertAction != null) {
       if (conflictAlgorithm != null) {
-        throw ArgumentError(['conflict algorithm can\'t be used on upsert']);
+        throw ArgumentError(
+            <String>["conflict algorithm can't be used on upsert"]);
       }
       if (upsertConflictValues == null || upsertAction == null) {
-        throw ArgumentError([
+        throw ArgumentError(<String>[
           'Both upsertConflictValues and upsertAction need to needs to be defined'
         ]);
       }
       if (!upsertAction.forUpsert) {
-        throw ArgumentError(['forUpsert is false']);
+        throw ArgumentError(<String>['forUpsert is false']);
       }
     }
 
@@ -42,18 +43,14 @@ class Insert {
       insert.write(' ${_conflictValues[conflictAlgorithm.index]}');
     }
     insert.write(' INTO ');
-    if (table == null) {
-      insert.write('NULL');
-    } else {
-      insert.write(table);
-    }
+    insert.write(table);
     insert.write(' (');
 
-    final List bindArgs = <dynamic>[];
-    final int size = (values != null) ? values.length : 0;
+    final List<dynamic> bindArgs = <dynamic>[];
+    final int size = values.length;
 
     if (size > 0) {
-      final sbValues = StringBuffer(') VALUES (');
+      final StringBuffer sbValues = StringBuffer(') VALUES (');
 
       if (rowIdConstraint != null && rowIdConstraint.hasClause()) {
         insert.write('rowid, ');
@@ -62,18 +59,15 @@ class Insert {
         bindArgs.addAll(rowIdConstraint.args);
       }
 
-      var i = 0;
+      int i = 0;
       values.forEach((String colName, dynamic value) {
         if (i++ > 0) {
           insert.write(', ');
           sbValues.write(', ');
         }
 
-        if (colName == null) {
-          insert.write('NULL');
-        } else {
-          insert.write(colName);
-        }
+        insert.write(colName);
+
         if (value == null) {
           sbValues.write('NULL');
         } else {
@@ -93,29 +87,21 @@ class Insert {
             'WHERE ${rowIdConstraint.statement})');
         bindArgs.addAll(rowIdConstraint.args);
       } else {
-        insert.write(nullColumnHack + ') VALUES (NULL');
+        insert.write('$nullColumnHack) VALUES (NULL');
       }
     }
     insert.write(')');
 
-    _args = bindArgs;
+    args = bindArgs;
 
     if (upsertConflictValues != null) {
       insert.write(' ON CONFLICT (');
       _writeColumns(insert, upsertConflictValues);
-      insert.write(') DO ${upsertAction.sql}');
+      insert.write(') DO ${upsertAction!.sql}');
 
-      if (upsertAction.args != null) args.addAll(upsertAction.args);
+      args.addAll(upsertAction.args);
     }
 
-    _sql = insert.toString();
-  }
-
-  String get sql {
-    return _sql;
-  }
-
-  List get args {
-    return _args;
+    sql = insert.toString();
   }
 }

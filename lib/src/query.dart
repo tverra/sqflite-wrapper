@@ -1,31 +1,29 @@
 part of sqflite_wrapper;
 
 class Query {
-  String _sql;
-  List _args;
+  late final String sql;
+  final List<dynamic> args = <dynamic>[];
 
   Query(
     String table, {
-    bool distinct,
-    List<String> columns,
-    List<SqfFunction> functions,
-    Where where,
-    Preload preload,
-    Join join,
-    List<String> groupBy,
-    String having,
-    OrderBy orderBy,
-    int limit,
-    int offset,
+    bool? distinct,
+    List<String>? columns,
+    List<SqfFunction>? functions,
+    Where? where,
+    Preload? preload,
+    Join? join,
+    List<String>? groupBy,
+    String? having,
+    OrderBy? orderBy,
+    int? limit,
+    int? offset,
   }) {
     if (groupBy == null && having != null) {
       throw ArgumentError(
           'HAVING clauses are only permitted when using a groupBy clause');
     }
-    if (table == null) table = 'NULL';
 
     final StringBuffer query = StringBuffer();
-    _args = [];
 
     query.write('SELECT');
     if (distinct == true) {
@@ -58,7 +56,7 @@ class Query {
     query.write(' ');
     query.write('FROM $table');
 
-    if (preload != null && preload.join != null && preload.join.hasClause()) {
+    if (preload != null && preload.join.hasClause()) {
       query.write(' ${preload.join.statement}');
     }
     if (join != null && join.hasClause()) {
@@ -67,37 +65,26 @@ class Query {
 
     if (where != null && where.hasClause()) {
       query.write(' WHERE ${where.statement}');
-      _args.addAll(where.args);
+      args.addAll(where.args);
     }
 
-    if (groupBy != null && groupBy.length > 0) {
+    if (groupBy != null && groupBy.isNotEmpty) {
       query.write(' GROUP BY ');
 
       for (int i = 0; i < groupBy.length; i++) {
-        if (groupBy[i] == null) {
-          query.write('NULL');
-        } else {
-          query.write(groupBy[i]);
-        }
+        query.write(groupBy[i]);
         if (i < groupBy.length - 1) {
           query.write(', ');
         }
       }
     }
     if (having != null) query.write(' HAVING $having');
-    if (orderBy != null && orderBy.hasClause())
+    if (orderBy != null && orderBy.hasClause()) {
       query.write(' ORDER BY ${orderBy.sql}');
+    }
     if (limit != null) query.write(' LIMIT ${limit.toString()}');
     if (offset != null) query.write(' OFFSET ${offset.toString()}');
 
-    _sql = query.toString();
-  }
-
-  String get sql {
-    return _sql;
-  }
-
-  List get args {
-    return _args;
+    sql = query.toString();
   }
 }

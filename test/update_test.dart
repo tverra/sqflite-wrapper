@@ -2,19 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
-  Map<String, dynamic> _map;
+void main() {
+  late Map<String, dynamic> _map;
 
   setUp(() {
-    _map = {'val1': 1, 'val2': 2, 'val3': 3};
+    _map = <String, dynamic>{'val1': 1, 'val2': 2, 'val3': 3};
   });
 
   group('table', () {
-    test('table is null if given null', () {
-      final Update update = Update(null, _map);
-      expect(update.sql, 'UPDATE NULL SET val1 = ?, val2 = ?, val3 = ?');
-    });
-
     test('table is given table value', () {
       final Update update = Update('table_name', _map);
       expect(update.sql, 'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ?');
@@ -31,32 +26,20 @@ main() {
       final Update update = Update('table_name', _map);
 
       expect(update.sql, 'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ?');
-      expect(update.args, [1, 2, 3]);
+      expect(update.args, <dynamic>[1, 2, 3]);
     });
 
     test('values are added if null', () {
-      final Update update = Update('table_name', {'value': null});
+      final Update update =
+          Update('table_name', <String, dynamic>{'value': null});
 
       expect(update.sql, 'UPDATE table_name SET value = NULL');
-      expect(update.args, []);
-    });
-
-    test('values are added where key is null', () {
-      final Update update = Update('table_name', {null: 1});
-
-      expect(update.sql, 'UPDATE table_name SET NULL = ?');
-      expect(update.args, [1]);
+      expect(update.args, <dynamic>[]);
     });
 
     test('empty map throws ArgumentError', () {
       expect(() {
-        Update('table_name', {});
-      }, throwsA(isA<ArgumentError>()));
-    });
-
-    test('null as map throws ArgumentError', () {
-      expect(() {
-        Update('table_name', null);
+        Update('table_name', <String, dynamic>{});
       }, throwsA(isA<ArgumentError>()));
     });
   });
@@ -68,7 +51,7 @@ main() {
 
       expect(update.sql,
           'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ? WHERE table_name.col = ?');
-      expect(update.args, [1, 2, 3, 'val']);
+      expect(update.args, <dynamic>[1, 2, 3, 'val']);
     });
 
     test('multiple where conditions is added to update', () {
@@ -80,7 +63,7 @@ main() {
           update.sql,
           'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ? '
           'WHERE table_name.col1 = ? OR col2 IS ?');
-      expect(update.args, [1, 2, 3, 'val1', 'val2']);
+      expect(update.args, <dynamic>[1, 2, 3, 'val1', 'val2']);
     });
 
     test('without args is added to update', () {
@@ -90,7 +73,7 @@ main() {
 
       expect(update.sql,
           'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ? WHERE table_name.col IS NULL');
-      expect(update.args, [1, 2, 3]);
+      expect(update.args, <dynamic>[1, 2, 3]);
     });
 
     test('empty where is not added', () {
@@ -98,7 +81,7 @@ main() {
       final Update update = Update('table_name', _map, where: where);
 
       expect(update.sql, 'UPDATE table_name SET val1 = ?, val2 = ?, val3 = ?');
-      expect(update.args, [1, 2, 3]);
+      expect(update.args, <dynamic>[1, 2, 3]);
     });
   });
 
@@ -158,7 +141,7 @@ main() {
       final Update update = Update.forUpsert(_map);
 
       expect(update.sql, 'UPDATE SET val1 = ?, val2 = ?, val3 = ?');
-      expect(update.args, [1, 2, 3]);
+      expect(update.args, <dynamic>[1, 2, 3]);
     });
 
     test('where is added to query', () {
@@ -167,14 +150,13 @@ main() {
 
       expect(update.sql,
           'UPDATE SET val1 = ?, val2 = ?, val3 = ? WHERE table_name.col = ?');
-      expect(update.args, [1, 2, 3, 'val']);
+      expect(update.args, <dynamic>[1, 2, 3, 'val']);
     });
 
     test('conflictAlgorithm is added', () {
       final Update update =
           Update.forUpsert(_map, conflictAlgorithm: ConflictAlgorithm.rollback);
-      expect(update.sql,
-          'UPDATE OR ROLLBACK SET val1 = ?, val2 = ?, val3 = ?');
+      expect(update.sql, 'UPDATE OR ROLLBACK SET val1 = ?, val2 = ?, val3 = ?');
     });
   });
 }

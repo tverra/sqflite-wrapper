@@ -2,41 +2,42 @@ part of sqflite_wrapper;
 
 class Where {
   final List<String> _whereCombinators = <String>['AND', 'OR'];
-
+  final List<dynamic> args = <dynamic>[];
+  String _statement = '';
   int _numberOfConditions = 0;
-  String _statement;
-  List _args;
 
-  Where(
-      {String table,
-      String col,
-      dynamic val,
-      bool not = false,
-      WhereCombinator combinator,
-      WhereType type}) {
+  Where({
+    String? table,
+    String? col,
+    dynamic val,
+    WhereCombinator? combinator,
+    WhereType? type,
+    bool not = false,
+  }) {
     if (table != null || col != null || val != null) {
       assert(col != null);
 
       if (type == null) {
         if (val == null) {
-          addIs(col, val, table: table, not: not, combinator: combinator);
+          addIs(col!, val, table: table, not: not, combinator: combinator);
         } else {
-          addEquals(col, val, table: table, not: not, combinator: combinator);
+          addEquals(col!, val, table: table, not: not, combinator: combinator);
         }
       } else {
         if (val == null) {
           if (type == WhereType.sqfIn) {
-            addIn(col, val, table: table, not: not, combinator: combinator);
+            addIn(col!, val, table: table, not: not, combinator: combinator);
           } else {
-            addIs(col, val, table: table, not: not, combinator: combinator);
+            addIs(col!, val, table: table, not: not, combinator: combinator);
           }
         } else {
           if (type == WhereType.sqfIn) {
-            addIn(col, val, table: table, not: not, combinator: combinator);
+            addIn(col!, val, table: table, not: not, combinator: combinator);
           } else if (type == WhereType.sqfIs) {
-            addIs(col, val, table: table, not: not, combinator: combinator);
+            addIs(col!, val, table: table, not: not, combinator: combinator);
           } else {
-            addEquals(col, val, table: table, not: not, combinator: combinator);
+            addEquals(col!, val,
+                table: table, not: not, combinator: combinator);
           }
         }
       }
@@ -47,10 +48,6 @@ class Where {
     return _statement;
   }
 
-  List get args {
-    return _args;
-  }
-
   int get numberOfConditions {
     return _numberOfConditions;
   }
@@ -59,24 +56,24 @@ class Where {
     return _numberOfConditions > 0;
   }
 
-  String _getCombinator(WhereCombinator combinator) {
-    if (_statement == '')
+  String _getCombinator(WhereCombinator? combinator) {
+    if (_statement == '') {
       return '';
-    else if (combinator == null)
+    } else if (combinator == null) {
       return ' ${_whereCombinators[WhereCombinator.and.index]} ';
-    else
+    } else {
       return ' ${_whereCombinators[combinator.index]} ';
+    }
   }
 
-  void _init() {
-    if (_statement == null) _statement = '';
-    if (_args == null) _args = [];
-  }
-
-  void add(String col, String condition, dynamic value,
-      {String table, bool not = false, WhereCombinator combinator}) {
-    _init();
-
+  void add(
+    String col,
+    String condition,
+    dynamic value, {
+    String? table,
+    WhereCombinator? combinator,
+    bool not = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
@@ -87,17 +84,20 @@ class Where {
       buffer.write('NULL');
     } else {
       buffer.write('?');
-      _args.add(value);
+      args.add(value);
     }
 
     _statement = buffer.toString();
     _numberOfConditions++;
   }
 
-  void addEquals(String col, dynamic value,
-      {String table, bool not = false, WhereCombinator combinator}) {
-    _init();
-
+  void addEquals(
+    String col,
+    dynamic value, {
+    String? table,
+    WhereCombinator? combinator,
+    bool not = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
@@ -114,17 +114,20 @@ class Where {
       buffer.write('NULL');
     } else {
       buffer.write('?');
-      _args.add(value);
+      args.add(value);
     }
 
     _statement = buffer.toString();
     _numberOfConditions++;
   }
 
-  void addIn(String col, List values,
-      {String table, bool not = false, WhereCombinator combinator}) {
-    _init();
-
+  void addIn(
+    String col,
+    List<dynamic> values, {
+    String? table,
+    WhereCombinator? combinator,
+    bool not = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
@@ -144,7 +147,7 @@ class Where {
         buffer.write('NULL');
       } else {
         buffer.write('?');
-        _args.add(values[i]);
+        args.add(values[i]);
       }
       if (i < values.length - 1) buffer.write(', ');
     }
@@ -154,10 +157,13 @@ class Where {
     _numberOfConditions++;
   }
 
-  void addSubQuery(String col, Query query,
-      {String table, bool not = false, WhereCombinator combinator}) {
-    _init();
-
+  void addSubQuery(
+    String col,
+    Query query, {
+    String? table,
+    WhereCombinator? combinator,
+    bool not = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
@@ -170,21 +176,20 @@ class Where {
       buffer.write(' IN ');
     }
 
-    if (query.sql == null) {
-      buffer.write('(NULL)');
-    } else {
-      buffer.write('(${query.sql})');
-      if (query.args != null) _args.addAll(query.args);
-    }
+    buffer.write('(${query.sql})');
+    args.addAll(query.args);
 
     _statement = buffer.toString();
     _numberOfConditions++;
   }
 
-  void addIs(String col, dynamic value,
-      {String table, bool not = false, WhereCombinator combinator}) {
-    _init();
-
+  void addIs(
+    String col,
+    dynamic value, {
+    String? table,
+    WhereCombinator? combinator,
+    bool not = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
@@ -201,29 +206,25 @@ class Where {
       buffer.write('NULL');
     } else {
       buffer.write('?');
-      _args.add(value);
+      args.add(value);
     }
 
     _statement = buffer.toString();
     _numberOfConditions++;
   }
 
-  void combine(Where where, {WhereCombinator combinator}) {
-    _init();
-
+  void combine(Where where, {WhereCombinator? combinator}) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
 
-    if (where != null) {
-      if (where.hasClause()) {
-        buffer.write(_getCombinator(combinator));
-        buffer.write(where.statement);
-      }
-      if (where.args != null) {
-        args.addAll(where.args);
-      }
-      _numberOfConditions += where.numberOfConditions;
+    if (where.hasClause()) {
+      buffer.write(_getCombinator(combinator));
+      buffer.write(where.statement);
     }
+    args.addAll(where.args);
+
+    _numberOfConditions += where.numberOfConditions;
+
     _statement = buffer.toString();
   }
 }

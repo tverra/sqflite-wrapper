@@ -1,31 +1,22 @@
 part of sqflite_wrapper;
 
 class Delete {
-  String _sql;
-  List _args;
+  late final String sql;
+  late final List<dynamic> args;
 
-  Delete(String table, {Where where}) {
-    final delete = StringBuffer();
-    _args = [];
+  Delete(String table, {Where? where}) {
+    final StringBuffer sql = StringBuffer();
 
-    delete.write('DELETE FROM ');
-    if (table == null) {
-      delete.write('NULL');
-    } else {
-      delete.write(table);
-    }
+    sql.write('DELETE FROM ');
+    sql.write(table);
+
     if (where != null && where.hasClause()) {
-      delete.write(' WHERE ${where.statement}');
-      _args = where.args;
+      sql.write(' WHERE ${where.statement}');
+      args = where.args;
+    } else {
+      args = <dynamic>[];
     }
-    _sql = delete.toString();
-  }
 
-  String get sql {
-    return _sql;
-  }
-
-  List get args {
-    return _args;
+    this.sql = sql.toString();
   }
 }
