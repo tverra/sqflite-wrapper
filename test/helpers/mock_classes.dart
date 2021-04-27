@@ -3,19 +3,22 @@ import 'package:sqflite/sqflite.dart';
 
 class MockBatch extends Mock implements Batch {
   final List<String> _statements = <String>[];
-  final List _arguments = [];
+  final List<Object?> _arguments = <Object?>[];
 
-  get statements {
+  List<String> get statements {
     return _statements;
   }
 
-  get arguments {
+  List<Object?> get arguments {
     return _arguments;
   }
 
   @override
-  void rawInsert(String sql, [List arguments]) {
+  void rawInsert(String sql, [List<Object?>? arguments]) {
     _statements.add(sql);
-    _arguments.addAll(arguments);
+
+    if (arguments != null) {
+      _arguments.addAll(arguments);
+    }
   }
 }

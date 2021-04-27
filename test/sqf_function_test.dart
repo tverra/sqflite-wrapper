@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('custom function can be set in constructor', () {
       final SqfFunction function = SqfFunction('WHATEVER(param)');
@@ -11,11 +11,6 @@ main() {
     test('alias can be added in constructor', () {
       final SqfFunction function = SqfFunction('FUNC(*)', alias: 'alias');
       expect(function.sql, 'FUNC(*) AS alias');
-    });
-
-    test('function can be null', () {
-      final SqfFunction function = SqfFunction(null);
-      expect(function.sql, 'NULL');
     });
   });
 
@@ -29,11 +24,6 @@ main() {
       final SqfFunction function = SqfFunction.abs('parameter', alias: 'alias');
       expect(function.sql, 'ABS(parameter) AS alias');
     });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.abs(null);
-      expect(function.sql, 'ABS(NULL)');
-    });
   });
 
   group('avg', () {
@@ -45,11 +35,6 @@ main() {
     test('avg function is created with alias', () {
       final SqfFunction function = SqfFunction.avg('parameter', alias: 'alias');
       expect(function.sql, 'AVG(parameter) AS alias');
-    });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.avg(null);
-      expect(function.sql, 'AVG(NULL)');
     });
   });
 
@@ -64,11 +49,6 @@ main() {
           SqfFunction.count('parameter', alias: 'alias');
       expect(function.sql, 'COUNT(parameter) AS alias');
     });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.count(null);
-      expect(function.sql, 'COUNT(NULL)');
-    });
   });
 
   group('max', () {
@@ -81,11 +61,6 @@ main() {
       final SqfFunction function = SqfFunction.max('parameter', alias: 'alias');
       expect(function.sql, 'MAX(parameter) AS alias');
     });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.max(null);
-      expect(function.sql, 'MAX(NULL)');
-    });
   });
 
   group('min', () {
@@ -97,11 +72,6 @@ main() {
     test('min function is created with alias', () {
       final SqfFunction function = SqfFunction.min('parameter', alias: 'alias');
       expect(function.sql, 'MIN(parameter) AS alias');
-    });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.min(null);
-      expect(function.sql, 'MIN(NULL)');
     });
   });
 
@@ -134,11 +104,6 @@ main() {
           SqfFunction.round('parameter', alias: 'alias');
       expect(function.sql, 'ROUND(parameter) AS alias');
     });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.round(null);
-      expect(function.sql, 'ROUND(NULL)');
-    });
   });
 
   group('sum', () {
@@ -151,43 +116,28 @@ main() {
       final SqfFunction function = SqfFunction.sum('parameter', alias: 'alias');
       expect(function.sql, 'SUM(parameter) AS alias');
     });
-
-    test('parameter can be null', () {
-      final SqfFunction function = SqfFunction.sum(null);
-      expect(function.sql, 'SUM(NULL)');
-    });
   });
 
   group('coalesce', () {
     test('coalesce function is created', () {
-      final SqfFunction function = SqfFunction.coalesce(['param1', 'param2']);
+      final SqfFunction function =
+          SqfFunction.coalesce(<String>['param1', 'param2']);
       expect(function.sql, 'COALESCE(param1, param2)');
     });
 
     test('coalesce function is created with one parameter', () {
-      final SqfFunction function = SqfFunction.coalesce(['param1']);
+      final SqfFunction function = SqfFunction.coalesce(<String>['param1']);
       expect(function.sql, 'COALESCE(param1)');
     });
 
     test('coalesce function is created with no parameters', () {
-      final SqfFunction function = SqfFunction.coalesce([]);
+      final SqfFunction function = SqfFunction.coalesce(<String>[]);
       expect(function.sql, 'COALESCE()');
-    });
-
-    test('coalesce function is created with null as parameter', () {
-      final SqfFunction function = SqfFunction.coalesce(null);
-      expect(function.sql, 'COALESCE()');
-    });
-
-    test('coalesce function is created with list containing null as parameter',
-        () {
-      final SqfFunction function = SqfFunction.coalesce([null]);
-      expect(function.sql, 'COALESCE(NULL)');
     });
 
     test('coalesce function is created with alias', () {
       final SqfFunction function =
-          SqfFunction.coalesce(['param1', 'param2'], alias: 'alias');
+          SqfFunction.coalesce(<String>['param1', 'param2'], alias: 'alias');
       expect(function.sql, 'COALESCE(param1, param2) AS alias');
     });
   });

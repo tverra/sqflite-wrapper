@@ -1,16 +1,16 @@
 part of sqflite_wrapper;
 
 class Preload {
-  Join _join;
-  List<String> _columns = <String>[];
+  final List<String> columns = <String>[];
+  late final Join _join;
   int _numberOfPreLoads = 0;
 
   Preload({
-    String parentTable,
-    String parentFKey,
-    String childTable,
-    String childKey,
-    List<String> parentColumns,
+    String? parentTable,
+    String? parentFKey,
+    String? childTable,
+    String? childKey,
+    List<String>? parentColumns,
   }) {
     _join = Join();
 
@@ -25,17 +25,12 @@ class Preload {
       assert(childTable != null);
       assert(parentColumns != null);
 
-      add(parentTable, parentFKey, childTable, childKey,
-          parentColumns);
+      add(parentTable!, parentFKey!, childTable!, childKey!, parentColumns!);
     }
   }
 
   Join get join {
     return _join;
-  }
-
-  List<String> get columns {
-    return _columns;
   }
 
   int get numberOfPreLoads {
@@ -49,7 +44,7 @@ class Preload {
   void add(String parentTable, String parentFKey, String childTable,
       String childKey, List<String> parentColumns) {
     _join.addLeftJoin(parentTable, parentFKey, childTable, childKey);
-    _columns.addAll(_aliasColumns(parentColumns, prefix: parentTable));
+    columns.addAll(_aliasColumns(parentColumns, prefix: parentTable));
 
     _numberOfPreLoads++;
   }
@@ -67,39 +62,34 @@ class Preload {
     final StringBuffer buffer = StringBuffer();
     final int n = columns.length;
 
-    for (var i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
       final String column = columns[i];
 
-      if (column != null) {
-        if (i > 0) buffer.write(', ');
-        buffer.write(column);
-      }
+      if (i > 0) buffer.write(', ');
+      buffer.write(column);
     }
     return buffer.toString();
   }
 
-  static Map<String, dynamic> extractPreLoadedMap(String table, Map<String, dynamic> map) {
-    if (map == null) return null;
-
+  static Map<String, dynamic>? extractPreLoadedMap(
+      String table, Map<String, dynamic> map) {
     final Map<String, dynamic> extracted = <String, dynamic>{};
 
     for (final String key in map.keys) {
-      if (key != null && key.length > table.length + 2 &&
+      if (key.length > table.length + 2 &&
           map[key] != null &&
-          key.substring(0, table.length + 2) ==
-              '_' + table + '_') {
+          key.substring(0, table.length + 2) == '_${table}_') {
         extracted.putIfAbsent(
-            key.substring(table.length + 2, key.length),
-                () => map[key]);
+            key.substring(table.length + 2, key.length), () => map[key]);
       }
     }
-    return extracted.length > 0 ? extracted : null;
+    return extracted.isNotEmpty ? extracted : null;
   }
 
-  List<String> _aliasColumns(List<String> columns, {String prefix}) {
+  List<String> _aliasColumns(List<String> columns, {String? prefix}) {
     final List<String> aliasedColumns = <String>[];
 
-    for (String column in columns) {
+    for (final String column in columns) {
       final StringBuffer buffer = StringBuffer();
 
       if (prefix != null) buffer.write('$prefix.');

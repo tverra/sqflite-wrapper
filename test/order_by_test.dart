@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('ordering is added', () {
       final OrderBy orderBy = OrderBy(col: 'col', orderType: OrderType.desc);
@@ -85,14 +85,6 @@ main() {
       expect(orderBy.sql, 'table.col DESC');
     });
 
-    test('order type is asserted not null', () {
-      final OrderBy orderBy = OrderBy();
-
-      expect(() {
-        orderBy.orderBy('col', null);
-      }, throwsA(isA<AssertionError>()));
-    });
-
     test('multiple orders can be added', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col1', OrderType.asc);
@@ -106,13 +98,6 @@ main() {
       orderBy.orderBy('', OrderType.asc);
 
       expect(orderBy.sql, ' ASC');
-    });
-
-    test('col can be null', () {
-      final OrderBy orderBy = OrderBy();
-      orderBy.orderBy(null, OrderType.asc);
-
-      expect(orderBy.sql, 'NULL ASC');
     });
 
     test('null order is inverted if order type is ascending', () {
@@ -143,14 +128,6 @@ main() {
       expect(customOrderBy.sql, 'COALESCE(col, 0) DESC');
     });
 
-    test('order is asserted not null', () {
-      final OrderBy orderBy = OrderBy();
-
-      expect(() {
-        orderBy.customOrderBy('COALESCE(col, 0)', null);
-      }, throwsA(isA<AssertionError>()));
-    });
-
     test('multiple orders can be added', () {
       final OrderBy customOrderBy = OrderBy();
       customOrderBy.customOrderBy('COALESCE(col1, 0)', OrderType.asc);
@@ -165,13 +142,6 @@ main() {
       customOrderBy.customOrderBy('', OrderType.asc);
 
       expect(customOrderBy.sql, ' ASC');
-    });
-
-    test('col can be null', () {
-      final OrderBy customOrderBy = OrderBy();
-      customOrderBy.customOrderBy(null, OrderType.asc);
-
-      expect(customOrderBy.sql, 'NULL ASC');
     });
 
     test('null order is inverted if order type is ascending', () {

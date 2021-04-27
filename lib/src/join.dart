@@ -1,17 +1,21 @@
 part of sqflite_wrapper;
 
 class Join {
-  final List<String> _joinTypes = ['INNER JOIN', 'LEFT JOIN', 'CROSS JOIN'];
+  final List<String> _joinTypes = <String>[
+    'INNER JOIN',
+    'LEFT JOIN',
+    'CROSS JOIN'
+  ];
 
   int _numberOfJoins = 0;
   String _statement = '';
 
   Join({
-    String tableName,
-    String fKey,
-    String refTableName,
-    String refKey,
-    JoinType type,
+    String? tableName,
+    String? fKey,
+    String? refTableName,
+    String? refKey,
+    JoinType? type,
   }) {
     if (tableName != null ||
         fKey != null ||
@@ -23,13 +27,13 @@ class Join {
       assert(refKey != null);
 
       if (type == null) {
-        addLeftJoin(tableName, fKey, refTableName, refKey);
+        addLeftJoin(tableName!, fKey!, refTableName!, refKey!);
       } else if (type == JoinType.innerJoin) {
-        addInnerJoin(tableName, fKey, refTableName, refKey);
+        addInnerJoin(tableName!, fKey!, refTableName!, refKey!);
       } else if (type == JoinType.crossJoin) {
-        addCrossJoin(tableName, fKey, refTableName, refKey);
+        addCrossJoin(tableName!, fKey!, refTableName!, refKey!);
       } else {
-        addLeftJoin(tableName, fKey, refTableName, refKey);
+        addLeftJoin(tableName!, fKey!, refTableName!, refKey!);
       }
     }
   }

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('returns empty string initially', () {
       final Join join = Join();
@@ -41,7 +41,7 @@ main() {
     });
 
     test('default join is left join if type is null', () {
-      Join join = Join(
+      final Join join = Join(
         tableName: 'table_name',
         fKey: 'f_key',
         refTableName: 'ref_table_name',
@@ -255,7 +255,7 @@ main() {
 
   group('addJoin', () {
     test('multiple different joins can be added', () {
-      Join join = Join();
+      final Join join = Join();
       join.addCrossJoin('table_name1', 'fkey4', 'ref_table_name7', 'ref_key10');
       join.addLeftJoin('table_name2', 'fkey5', 'ref_table_name8', 'ref_key11');
       join.addInnerJoin('table_name3', 'fkey6', 'ref_table_name9', 'ref_key12');

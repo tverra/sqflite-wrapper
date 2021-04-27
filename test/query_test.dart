@@ -1,20 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-main() {
+void main() {
   group('constructor', () {
     test('args is initially empty list', () {
       final Query query = Query('');
-      expect(query.args, []);
+      expect(query.args, <dynamic>[]);
     });
   });
 
   group('table', () {
-    test('table is null if given null', () {
-      final Query query = Query(null);
-      expect(query.sql, 'SELECT NULL.* FROM NULL');
-    });
-
     test('table is given table value', () {
       final Query query = Query('table_name');
       expect(query.sql, 'SELECT table_name.* FROM table_name');
@@ -45,18 +40,18 @@ main() {
     });
 
     test('no columns are selected if columns is empty list', () {
-      final Query query = Query('table_name', columns: []);
+      final Query query = Query('table_name', columns: <String>[]);
       expect(query.sql, 'SELECT FROM table_name');
     });
 
     test('single column is selected if given', () {
-      final Query query = Query('table_name', columns: ['col']);
+      final Query query = Query('table_name', columns: <String>['col']);
       expect(query.sql, 'SELECT table_name.col FROM table_name');
     });
 
     test('multiple columns are selected if given', () {
       final Query query =
-          Query('table_name', columns: ['col1', 'col2', 'col3']);
+          Query('table_name', columns: <String>['col1', 'col2', 'col3']);
       expect(
           query.sql,
           'SELECT table_name.col1, table_name.col2, table_name.col3 '
@@ -66,27 +61,32 @@ main() {
 
   group('functions', () {
     test('no functions are added if functions is empty list', () {
-      final Query query = Query('table_name', functions: []);
+      final Query query = Query('table_name', functions: <SqfFunction>[]);
       expect(query.sql, 'SELECT FROM table_name');
     });
 
     test('single function is added if given', () {
       final Query query =
-          Query('table_name', functions: [SqfFunction.min('col')]);
+          Query('table_name', functions: <SqfFunction>[SqfFunction.min('col')]);
       expect(query.sql, 'SELECT MIN(col) FROM table_name');
     });
 
     test('multiple columns are selected if given', () {
-      final Query query = Query('table_name',
-          functions: [SqfFunction.min('col1'), SqfFunction.max('col2')]);
+      final Query query = Query(
+        'table_name',
+        functions: <SqfFunction>[
+          SqfFunction.min('col1'),
+          SqfFunction.max('col2'),
+        ],
+      );
       expect(query.sql, 'SELECT MIN(col1), MAX(col2) FROM table_name');
     });
 
     test('both columns and functions are added', () {
       final Query query = Query(
         'table_name',
-        columns: ['col1', 'col2', 'col3'],
-        functions: [
+        columns: <String>['col1', 'col2', 'col3'],
+        functions: <SqfFunction>[
           SqfFunction.min('col1', alias: 'val1'),
           SqfFunction.max('col2', alias: 'val2'),
         ],
@@ -106,7 +106,7 @@ main() {
 
       expect(query.sql,
           'SELECT table_name.* FROM table_name WHERE table_name.col = ?');
-      expect(query.args, ['val']);
+      expect(query.args, <dynamic>['val']);
     });
 
     test('multiple where conditions is added to query', () {
@@ -118,7 +118,7 @@ main() {
           query.sql,
           'SELECT table_name.* FROM table_name '
           'WHERE table_name.col1 = ? OR col2 IS ?');
-      expect(query.args, ['val1', 'val2']);
+      expect(query.args, <dynamic>['val1', 'val2']);
     });
 
     test('without args is added to query', () {
@@ -128,19 +128,19 @@ main() {
 
       expect(query.sql,
           'SELECT table_name.* FROM table_name WHERE table_name.col IS NULL');
-      expect(query.args, []);
+      expect(query.args, <dynamic>[]);
     });
 
     test('multiple columns can be added', () {
       final Where where = Where(table: 'table_name', col: 'col', val: 'val');
       final Query query =
-          Query('table_name', columns: ['col1', 'col2'], where: where);
+          Query('table_name', columns: <String>['col1', 'col2'], where: where);
 
       expect(
           query.sql,
           'SELECT table_name.col1, table_name.col2 FROM table_name '
           'WHERE table_name.col = ?');
-      expect(query.args, ['val']);
+      expect(query.args, <dynamic>['val']);
     });
 
     test('empty where is not added', () {
@@ -148,7 +148,7 @@ main() {
       final Query query = Query('table_name', where: where);
 
       expect(query.sql, 'SELECT table_name.* FROM table_name');
-      expect(query.args, []);
+      expect(query.args, <dynamic>[]);
     });
   });
 
@@ -159,7 +159,7 @@ main() {
         parentFKey: 'pfkey',
         childTable: 'child',
         childKey: 'ckey',
-        parentColumns: ['col1', 'col2', 'col3'],
+        parentColumns: <String>['col1', 'col2', 'col3'],
       );
       final Query query = Query('child', preload: preload);
 
@@ -179,9 +179,9 @@ main() {
         parentFKey: 'pfkey',
         childTable: 'child',
         childKey: 'ckey',
-        parentColumns: ['col'],
+        parentColumns: <String>['col'],
       );
-      preload.add('parent2', 'pfkey', 'child', 'ckey', ['col']);
+      preload.add('parent2', 'pfkey', 'child', 'ckey', <String>['col']);
       final Query query = Query('child', preload: preload);
 
       expect(
@@ -208,10 +208,10 @@ main() {
         parentFKey: 'pfkey',
         childTable: 'child',
         childKey: 'ckey',
-        parentColumns: ['col1', 'col2', 'col3'],
+        parentColumns: <String>['col1', 'col2', 'col3'],
       );
       final Query query =
-          Query('child', columns: ['col1', 'col2'], preload: preload);
+          Query('child', columns: <String>['col1', 'col2'], preload: preload);
 
       expect(
         query.sql,
@@ -229,7 +229,7 @@ main() {
         parentFKey: 'pfkey',
         childTable: 'child',
         childKey: 'ckey',
-        parentColumns: ['col1'],
+        parentColumns: <String>['col1'],
       );
       final Where where = Where(table: 'child', col: 'ckey', val: 'val');
       final Query query = Query('child', where: where, preload: preload);
@@ -241,7 +241,7 @@ main() {
         'FROM child LEFT JOIN parent ON parent.pfkey = child.ckey '
         'WHERE child.ckey = ?',
       );
-      expect(query.args, ['val']);
+      expect(query.args, <String>['val']);
     });
   });
 
@@ -294,7 +294,7 @@ main() {
         parentFKey: 'pfkey',
         childTable: 'child',
         childKey: 'ckey',
-        parentColumns: ['col1', 'col2', 'col3'],
+        parentColumns: <String>['col1', 'col2', 'col3'],
       );
       final Join join = Join(
         tableName: 'parent2',
@@ -333,19 +333,19 @@ main() {
         'LEFT JOIN parent ON parent.pfkey = child.ckey '
         'WHERE child.ckey = ?',
       );
-      expect(query.args, ['val']);
+      expect(query.args, <String>['val']);
     });
   });
 
   group('groupBy', () {
     test('is added to query', () {
-      final Query query = Query('table_name', groupBy: ['col']);
+      final Query query = Query('table_name', groupBy: <String>['col']);
       expect(query.sql, 'SELECT table_name.* FROM table_name GROUP BY col');
     });
 
     test('multiple columns is added to query', () {
       final Query query =
-          Query('table_name', groupBy: ['col1', 'col2', 'col3']);
+          Query('table_name', groupBy: <String>['col1', 'col2', 'col3']);
       expect(query.sql,
           'SELECT table_name.* FROM table_name GROUP BY col1, col2, col3');
     });
@@ -356,18 +356,14 @@ main() {
     });
 
     test('is not added if empty list', () {
-      final Query query = Query('table_name', groupBy: []);
+      final Query query = Query('table_name', groupBy: <String>[]);
       expect(query.sql, 'SELECT table_name.* FROM table_name');
-    });
-
-    test('value can be null', () {
-      final Query query = Query('table_name', groupBy: [null]);
-      expect(query.sql, 'SELECT table_name.* FROM table_name GROUP BY NULL');
     });
 
     test('can be added after where', () {
       final Where where = Where(table: 'table_name', col: 'col', val: 'val');
-      final Query query = Query('table_name', where: where, groupBy: ['col']);
+      final Query query =
+          Query('table_name', where: where, groupBy: <String>['col']);
 
       expect(
         query.sql,
@@ -375,7 +371,7 @@ main() {
         'WHERE table_name.col = ? '
         'GROUP BY col',
       );
-      expect(query.args, ['val']);
+      expect(query.args, <String>['val']);
     });
   });
 
@@ -388,7 +384,7 @@ main() {
 
     test('is added to query', () {
       final Query query = Query('table_name',
-          groupBy: ['col'], having: 'COUNT(table_name.col) > val');
+          groupBy: <String>['col'], having: 'COUNT(table_name.col) > val');
       expect(
         query.sql,
         'SELECT table_name.* FROM table_name '
@@ -398,7 +394,8 @@ main() {
     });
 
     test('can be empty string', () {
-      final Query query = Query('table_name', groupBy: ['col'], having: '');
+      final Query query =
+          Query('table_name', groupBy: <String>['col'], having: '');
       expect(
         query.sql,
         'SELECT table_name.* FROM table_name '
@@ -408,7 +405,11 @@ main() {
     });
 
     test('is not added if null', () {
-      final Query query = Query('table_name', groupBy: ['col'], having: null);
+      final Query query = Query(
+        'table_name',
+        groupBy: <String>['col'],
+        having: null,
+      );
       expect(query.sql, 'SELECT table_name.* FROM table_name GROUP BY col');
     });
   });
@@ -450,7 +451,7 @@ main() {
           OrderBy(table: 'table_name', col: 'col', orderType: OrderType.asc);
 
       final Query query = Query('table_name',
-          groupBy: ['col'],
+          groupBy: <String>['col'],
           having: 'COUNT(table_name.col) > val',
           orderBy: orderBy);
       expect(
@@ -524,7 +525,7 @@ main() {
       final Query query = Query(
         'table',
         distinct: true,
-        columns: ['col1', 'col2', 'col3'],
+        columns: <String>['col1', 'col2', 'col3'],
         where: Where(
           table: 'table',
           col: 'col1',
@@ -535,7 +536,7 @@ main() {
           parentFKey: 'pfkey',
           childTable: 'table',
           childKey: 'ckey',
-          parentColumns: ['pcol1', 'pcol2', 'pcol3'],
+          parentColumns: <String>['pcol1', 'pcol2', 'pcol3'],
         ),
         join: Join(
           tableName: 'table',
@@ -543,7 +544,7 @@ main() {
           refTableName: 'parent2',
           refKey: 'pfkey',
         ),
-        groupBy: ['col1'],
+        groupBy: <String>['col1'],
         having: 'COUNT(table_name.col) > 10',
         orderBy: OrderBy(
           table: 'table',
@@ -569,7 +570,7 @@ main() {
           'ORDER BY table.col1 DESC '
           'LIMIT 10 '
           'OFFSET 5');
-      expect(query.args, [1]);
+      expect(query.args, <dynamic>[1]);
     });
   });
 }
