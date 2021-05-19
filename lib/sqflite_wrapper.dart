@@ -6,17 +6,21 @@
 library sqflite_wrapper;
 
 import 'package:sqflite/sqflite.dart';
-part 'src/query_helpers.dart';
 
-part 'src/join.dart';
-part 'src/order_by.dart';
-part 'src/preload.dart';
-part 'src/query_container.dart';
-part 'src/sqf_function.dart';
-part 'src/temp_table.dart';
-part 'src/where.dart';
-
-part 'src/query.dart';
-part 'src/insert.dart';
-part 'src/update.dart';
-part 'src/delete.dart';
+part 'src/migration/sqf_column.dart';
+part 'src/migration/sqf_index.dart';
+part 'src/migration/sqf_migration.dart';
+part 'src/migration/sqf_references.dart';
+part 'src/migration/sqf_table.dart';
+part 'src/query/delete.dart';
+part 'src/query/insert.dart';
+part 'src/query/join.dart';
+part 'src/query/order_by.dart';
+part 'src/query/preload.dart';
+part 'src/query/query.dart';
+part 'src/query/query_container.dart';
+part 'src/query/query_helpers.dart';
+part 'src/query/sqf_function.dart';
+part 'src/query/temp_table.dart';
+part 'src/query/update.dart';
+part 'src/query/where.dart';

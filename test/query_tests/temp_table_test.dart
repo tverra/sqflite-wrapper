@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
-import 'helpers/mock_classes.dart';
+import '../helpers/mock_classes.dart';
 
 void main() {
   group('constructor', () {
