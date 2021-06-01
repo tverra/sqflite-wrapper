@@ -11,6 +11,8 @@ class SqfTable {
         _columns = columns;
 
   String get create {
+    assert(_columns.isNotEmpty, 'At least one column is required');
+
     final StringBuffer sql = StringBuffer();
 
     sql.write('CREATE TABLE $_name (');

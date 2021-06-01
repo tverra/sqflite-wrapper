@@ -70,16 +70,15 @@ void main() {
       expect(actual, expected);
     });
 
-    test('table is created with no columns', () {
+    test('at least one column is required', () {
       final SqfTable table = SqfTable(
         name: 'table_name',
         columns: <SqfColumn>[],
       );
 
-      final String actual = table.create;
-      const String expected = 'CREATE TABLE table_name ();';
-
-      expect(actual, expected);
+      expect(() {
+        table.create;
+      }, throwsA(isA<AssertionError>()));
     });
   });
 
