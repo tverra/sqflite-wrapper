@@ -13,7 +13,7 @@ void main() {
 
       final String actual = references.sql(columnName: 'column_name');
       const String expected =
-          'REFERENCES foreign_table_name(foreign_column_name) '
+          'REFERENCES `foreign_table_name`(`foreign_column_name`) '
           'ON UPDATE NO ACTION ON DELETE SET DEFAULT';
 
       expect(actual, expected);
@@ -27,7 +27,7 @@ void main() {
 
       final String actual = references.sql(columnName: 'column_name');
       const String expected =
-          'REFERENCES foreign_table_name(foreign_column_name)';
+          'REFERENCES `foreign_table_name`(`foreign_column_name`)';
 
       expect(actual, expected);
     });
@@ -41,7 +41,7 @@ void main() {
 
       final String actual = references.sql(columnName: 'column_name');
       const String expected =
-          'REFERENCES foreign_table_name(foreign_column_name) '
+          'REFERENCES `foreign_table_name`(`foreign_column_name`) '
           'ON UPDATE RESTRICT';
 
       expect(actual, expected);
@@ -56,7 +56,7 @@ void main() {
 
       final String actual = references.sql(columnName: 'column_name');
       const String expected =
-          'REFERENCES foreign_table_name(foreign_column_name) '
+          'REFERENCES `foreign_table_name`(`foreign_column_name`) '
           'ON DELETE SET NULL';
 
       expect(actual, expected);
@@ -73,7 +73,7 @@ void main() {
 
         final String actual = references.sql(columnName: 'column_name');
         const String expected =
-            'REFERENCES foreign_table_name(foreign_column_name) '
+            'REFERENCES `foreign_table_name`(`foreign_column_name`) '
             'ON UPDATE NO ACTION ON DELETE NO ACTION';
 
         expect(actual, expected);
@@ -89,7 +89,7 @@ void main() {
 
         final String actual = references.sql(columnName: 'column_name');
         const String expected =
-            'REFERENCES foreign_table_name(foreign_column_name) '
+            'REFERENCES `foreign_table_name`(`foreign_column_name`) '
             'ON UPDATE RESTRICT ON DELETE RESTRICT';
 
         expect(actual, expected);
@@ -105,7 +105,7 @@ void main() {
 
         final String actual = references.sql(columnName: 'column_name');
         const String expected =
-            'REFERENCES foreign_table_name(foreign_column_name) '
+            'REFERENCES `foreign_table_name`(`foreign_column_name`) '
             'ON UPDATE SET NULL ON DELETE SET NULL';
 
         expect(actual, expected);
@@ -121,7 +121,7 @@ void main() {
 
         final String actual = references.sql(columnName: 'column_name');
         const String expected =
-            'REFERENCES foreign_table_name(foreign_column_name) '
+            'REFERENCES `foreign_table_name`(`foreign_column_name`) '
             'ON UPDATE SET DEFAULT ON DELETE SET DEFAULT';
 
         expect(actual, expected);
@@ -137,7 +137,7 @@ void main() {
 
         final String actual = references.sql(columnName: 'column_name');
         const String expected =
-            'REFERENCES foreign_table_name(foreign_column_name) '
+            'REFERENCES `foreign_table_name`(`foreign_column_name`) '
             'ON UPDATE CASCADE ON DELETE CASCADE';
 
         expect(actual, expected);

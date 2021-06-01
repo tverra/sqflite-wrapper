@@ -7,7 +7,7 @@ void main() {
       final SqfColumn column = SqfColumn(name: 'column_name');
 
       final String actual = column.sql;
-      const String expected = 'column_name';
+      const String expected = '`column_name`';
 
       expect(actual, expected);
     });
@@ -17,7 +17,7 @@ void main() {
           SqfColumn(name: 'column_name', type: SqfType.integer);
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER';
+      const String expected = '`column_name` INTEGER';
 
       expect(actual, expected);
     });
@@ -30,7 +30,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER PRIMARY KEY';
+      const String expected = '`column_name` INTEGER PRIMARY KEY';
 
       expect(actual, expected);
     });
@@ -43,7 +43,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER DEFAULT 42';
+      const String expected = '`column_name` INTEGER DEFAULT 42';
 
       expect(actual, expected);
     });
@@ -61,8 +61,8 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER REFERENCES '
-          'foreign_table_name(foreign_column_name) '
+      const String expected = '`column_name` INTEGER REFERENCES '
+          '`foreign_table_name`(`foreign_column_name`) '
           'ON UPDATE NO ACTION ON DELETE CASCADE';
       expect(actual, expected);
     });
@@ -85,8 +85,8 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER NOT NULL UNIQUE DEFAULT 0 '
-          'REFERENCES foreign_table_name(foreign_column_name) '
+      const String expected = '`column_name` INTEGER NOT NULL UNIQUE DEFAULT 0 '
+          'REFERENCES `foreign_table_name`(`foreign_column_name`) '
           'ON UPDATE NO ACTION ON DELETE CASCADE';
       expect(actual, expected);
     });
@@ -98,7 +98,7 @@ void main() {
           SqfColumn(name: 'column_name', type: SqfType.integer);
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER';
+      const String expected = '`column_name` INTEGER';
 
       expect(actual, expected);
     });
@@ -108,7 +108,7 @@ void main() {
           SqfColumn(name: 'column_name', type: SqfType.text);
 
       final String actual = column.sql;
-      const String expected = 'column_name TEXT';
+      const String expected = '`column_name` TEXT';
 
       expect(actual, expected);
     });
@@ -118,7 +118,7 @@ void main() {
           SqfColumn(name: 'column_name', type: SqfType.blob);
 
       final String actual = column.sql;
-      const String expected = 'column_name BLOB';
+      const String expected = '`column_name` BLOB';
 
       expect(actual, expected);
     });
@@ -128,7 +128,7 @@ void main() {
           SqfColumn(name: 'column_name', type: SqfType.real);
 
       final String actual = column.sql;
-      const String expected = 'column_name REAL';
+      const String expected = '`column_name` REAL';
 
       expect(actual, expected);
     });
@@ -143,7 +143,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER PRIMARY KEY';
+      const String expected = '`column_name` INTEGER PRIMARY KEY';
 
       expect(actual, expected);
     });
@@ -160,7 +160,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER PRIMARY KEY';
+      const String expected = '`column_name` INTEGER PRIMARY KEY';
 
       expect(actual, expected);
     });
@@ -178,7 +178,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER PRIMARY KEY';
+      const String expected = '`column_name` INTEGER PRIMARY KEY';
 
       expect(actual, expected);
     });
@@ -191,7 +191,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER NOT NULL';
+      const String expected = '`column_name` INTEGER NOT NULL';
 
       expect(actual, expected);
     });
@@ -204,7 +204,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER UNIQUE';
+      const String expected = '`column_name` INTEGER UNIQUE';
 
       expect(actual, expected);
     });
@@ -221,7 +221,7 @@ void main() {
     );
 
     final String actual = column.sql;
-    const String expected = 'column_name INTEGER NOT NULL UNIQUE';
+    const String expected = '`column_name` INTEGER NOT NULL UNIQUE';
 
     expect(actual, expected);
   });
@@ -237,7 +237,7 @@ void main() {
     );
 
     final String actual = column.sql;
-    const String expected = 'column_name INTEGER NOT NULL UNIQUE';
+    const String expected = '`column_name` INTEGER NOT NULL UNIQUE';
 
     expect(actual, expected);
   });
@@ -251,7 +251,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name INTEGER DEFAULT 1';
+      const String expected = '`column_name` INTEGER DEFAULT 1';
 
       expect(actual, expected);
     });
@@ -264,7 +264,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name TEXT DEFAULT "1"';
+      const String expected = '`column_name` TEXT DEFAULT "1"';
 
       expect(actual, expected);
     });
@@ -277,7 +277,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name BLOB DEFAULT (1)';
+      const String expected = '`column_name` BLOB DEFAULT (1)';
 
       expect(actual, expected);
     });
@@ -290,7 +290,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name REAL DEFAULT 1';
+      const String expected = '`column_name` REAL DEFAULT 1';
 
       expect(actual, expected);
     });
@@ -303,7 +303,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name NUMERIC DEFAULT 1';
+      const String expected = '`column_name` NUMERIC DEFAULT 1';
 
       expect(actual, expected);
     });
@@ -315,7 +315,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name DEFAULT 1';
+      const String expected = '`column_name` DEFAULT 1';
 
       expect(actual, expected);
     });
@@ -327,7 +327,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name DEFAULT "1"';
+      const String expected = '`column_name` DEFAULT "1"';
 
       expect(actual, expected);
     });
@@ -339,7 +339,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = 'column_name DEFAULT 1.0';
+      const String expected = '`column_name` DEFAULT 1.0';
 
       expect(actual, expected);
     });
@@ -351,7 +351,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = "column_name DEFAULT (Instance of 'SqfColumn')";
+      const String expected = "`column_name` DEFAULT (Instance of 'SqfColumn')";
 
       expect(actual, expected);
     });
@@ -363,7 +363,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = "column_name DEFAULT CURRENT_DATE";
+      const String expected = "`column_name` DEFAULT CURRENT_DATE";
 
       expect(actual, expected);
     });
@@ -375,7 +375,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = "column_name DEFAULT (ABS(-42))";
+      const String expected = "`column_name` DEFAULT (ABS(-42))";
 
       expect(actual, expected);
     });
@@ -386,7 +386,8 @@ void main() {
       final SqfColumn column = SqfColumn(name: 'column_name');
 
       final String actual = column.drop('table_name');
-      const String expected = 'ALTER TABLE table_name DROP COLUMN column_name;';
+      const String expected =
+          'ALTER TABLE `table_name` DROP COLUMN `column_name`;';
 
       expect(actual, expected);
     });
@@ -422,8 +423,8 @@ void main() {
       );
 
       final String actual = column.rename('table_name', 'new_col_name');
-      const String expected =
-          'ALTER TABLE table_name RENAME COLUMN column_name TO new_col_name;';
+      const String expected = 'ALTER TABLE `table_name` '
+          'RENAME COLUMN `column_name` TO `new_col_name`;';
 
       expect(actual, expected);
     });

@@ -17,7 +17,7 @@ void main() {
 
       final String actual = table.create;
       const String expected =
-          'CREATE TABLE table_name (id INTEGER PRIMARY KEY);';
+          'CREATE TABLE `table_name` (`id` INTEGER PRIMARY KEY);';
 
       expect(actual, expected);
     });
@@ -60,11 +60,11 @@ void main() {
 
       final String actual = table.create;
       const String expected =
-          'CREATE TABLE table_name (col1 INTEGER PRIMARY KEY, '
-          'col2 TEXT NOT NULL, '
-          'col3 BLOB UNIQUE, '
-          'col4 REAL, '
-          'col5 INTEGER REFERENCES f_table(f_col) '
+          'CREATE TABLE `table_name` (`col1` INTEGER PRIMARY KEY, '
+          '`col2` TEXT NOT NULL, '
+          '`col3` BLOB UNIQUE, '
+          '`col4` REAL, '
+          '`col5` INTEGER REFERENCES `f_table`(`f_col`) '
           'ON UPDATE SET NULL ON DELETE RESTRICT);';
 
       expect(actual, expected);
@@ -96,7 +96,7 @@ void main() {
       );
 
       final String actual = table.drop;
-      const String expected = 'DROP TABLE table_name;';
+      const String expected = 'DROP TABLE `table_name`;';
 
       expect(actual, expected);
     });
@@ -117,7 +117,7 @@ void main() {
 
       final String actual = table.rename('new_table_name');
       const String expected =
-          'ALTER TABLE table_name RENAME TO new_table_name;';
+          'ALTER TABLE `table_name` RENAME TO `new_table_name`;';
 
       expect(actual, expected);
     });
@@ -153,7 +153,7 @@ void main() {
 
       final String actual = table.renameColumn('col2', 'new_col');
       const String expected =
-          'ALTER TABLE table_name RENAME COLUMN col2 TO new_col;';
+          'ALTER TABLE `table_name` RENAME COLUMN `col2` TO `new_col`;';
 
       expect(actual, expected);
     });
@@ -170,7 +170,8 @@ void main() {
 
       table.renameColumn('col2', 'new_col');
       final String actual = table.create;
-      const String expected = 'CREATE TABLE table_name (col1, new_col, col3);';
+      const String expected =
+          'CREATE TABLE `table_name` (`col1`, `new_col`, `col3`);';
 
       expect(actual, expected);
     });
@@ -188,7 +189,7 @@ void main() {
       );
 
       final String actual = table.addColumn(SqfColumn(name: 'col4'));
-      const String expected = 'ALTER TABLE table_name ADD COLUMN col4;';
+      const String expected = 'ALTER TABLE `table_name` ADD COLUMN `col4`;';
 
       expect(actual, expected);
     });
@@ -206,7 +207,7 @@ void main() {
       table.addColumn(SqfColumn(name: 'col4'));
       final String actual = table.create;
       const String expected =
-          'CREATE TABLE table_name (col1, col2, col3, col4);';
+          'CREATE TABLE `table_name` (`col1`, `col2`, `col3`, `col4`);';
 
       expect(actual, expected);
     });
@@ -317,7 +318,7 @@ void main() {
       );
 
       final String actual = table.dropColumn('col2');
-      const String expected = 'ALTER TABLE table_name DROP COLUMN col2;';
+      const String expected = 'ALTER TABLE `table_name` DROP COLUMN `col2`;';
 
       expect(actual, expected);
     });
@@ -334,7 +335,7 @@ void main() {
 
       table.dropColumn('col2');
       final String actual = table.create;
-      const String expected = 'CREATE TABLE table_name (col1, col3);';
+      const String expected = 'CREATE TABLE `table_name` (`col1`, `col3`);';
 
       expect(actual, expected);
     });

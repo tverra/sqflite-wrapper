@@ -13,25 +13,25 @@ class SqfTable {
   String get create {
     assert(_columns.isNotEmpty, 'At least one column is required');
 
-    final StringBuffer sql = StringBuffer();
+    final StringBuffer buffer = StringBuffer();
 
-    sql.write('CREATE TABLE $_name (');
+    buffer.write('CREATE TABLE `$_name` (');
 
     for (int i = 0; i < _columns.length; i++) {
-      sql.write(_columns[i].sql);
+      buffer.write(_columns[i].sql);
 
       if (i < _columns.length - 1) {
-        sql.write(', ');
+        buffer.write(', ');
       }
     }
 
-    sql.write(');');
+    buffer.write(');');
 
-    return sql.toString();
+    return buffer.toString();
   }
 
   String get drop {
-    return 'DROP TABLE $_name;';
+    return 'DROP TABLE `$_name`;';
   }
 
   String get name {
@@ -39,7 +39,7 @@ class SqfTable {
   }
 
   String rename(String newName) {
-    final String sql = 'ALTER TABLE $_name RENAME TO $newName;';
+    final String sql = 'ALTER TABLE `$_name` RENAME TO `$newName`;';
     _name = newName;
     return sql;
   }
@@ -54,13 +54,13 @@ class SqfTable {
   String addColumn(SqfColumn newColumn) {
     assert(_columns.where((SqfColumn c) => c.name == newColumn.name).isEmpty,
         'Duplicate column name');
-    if (newColumn.indexes != null) {
-      assert(!newColumn.indexes!.contains(SqfColumnProperty.primaryKey),
+    if (newColumn.properties != null) {
+      assert(!newColumn.properties!.contains(SqfColumnProperty.primaryKey),
           "Added column can't be primary key");
-      assert(!newColumn.indexes!.contains(SqfColumnProperty.unique),
+      assert(!newColumn.properties!.contains(SqfColumnProperty.unique),
           "Added column can't be unique");
       assert(
-          !newColumn.indexes!.contains(SqfColumnProperty.notNull) &&
+          !newColumn.properties!.contains(SqfColumnProperty.notNull) &&
               (newColumn.defaultValue == null ||
                   newColumn.defaultValue == SqfColumnValue.nullValue),
           'Added column with NOT NULL constraint must have a default value '
@@ -77,7 +77,7 @@ class SqfTable {
 
     _columns.add(newColumn);
 
-    return 'ALTER TABLE $_name ADD COLUMN ${newColumn.sql};';
+    return 'ALTER TABLE `$_name` ADD COLUMN ${newColumn.sql};';
   }
 
   String dropColumn(String columnName) {
