@@ -4,11 +4,16 @@ class Delete {
   late final String sql;
   late final List<dynamic> args;
 
-  Delete(String table, {Where? where}) {
+  Delete(String table, {Where? where, bool escapeNames = true}) {
     final StringBuffer sql = StringBuffer();
 
     sql.write('DELETE FROM ');
-    sql.write(table);
+
+    if (escapeNames) {
+      sql.write('`$table`');
+    } else {
+      sql.write(table);
+    }
 
     if (where != null && where.hasClause()) {
       sql.write(' WHERE ${where.statement}');

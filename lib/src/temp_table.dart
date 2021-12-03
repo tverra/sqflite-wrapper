@@ -6,20 +6,33 @@ class TempTable {
   late final String dropTableSql;
   late final Query query;
 
-  TempTable(this.identifier) {
-    createTableSql = 'CREATE TEMP TABLE _temp_table_$identifier '
-        '(${identifier}_value INT NOT NULL)';
-    dropTableSql = 'DROP TABLE temp._temp_table_$identifier';
+  TempTable(this.identifier, {bool escapeNames = true}) {
+    if (escapeNames) {
+      createTableSql = 'CREATE TEMP TABLE `_temp_table_$identifier` '
+          '(`${identifier}_value` INT NOT NULL)';
+      dropTableSql = 'DROP TABLE temp.`_temp_table_$identifier`';
+    } else {
+      createTableSql = 'CREATE TEMP TABLE _temp_table_$identifier '
+          '(${identifier}_value INT NOT NULL)';
+      dropTableSql = 'DROP TABLE temp._temp_table_$identifier';
+    }
     query = Query(
-      'temp._temp_table_$identifier',
-      columns: <String>['${identifier}_value'],
+      escapeNames
+          ? 'temp.`_temp_table_$identifier`'
+          : 'temp._temp_table_$identifier',
+      columns: <String>[
+        if (escapeNames) '`${identifier}_value`' else '${identifier}_value'
+      ],
+      escapeNames: false,
     );
   }
 
-  void insertValues(Batch batch, List<int> values) {
+  void insertValues(Batch batch, List<int> values, {bool escapeNames = true}) {
     for (final int value in values) {
       batch.rawInsert(
-        'INSERT INTO temp._temp_table_$identifier VALUES (?)',
+        escapeNames
+            ? 'INSERT INTO temp.`_temp_table_$identifier` VALUES (?)'
+            : 'INSERT INTO temp._temp_table_$identifier VALUES (?)',
         <int>[value],
       );
     }

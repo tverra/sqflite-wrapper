@@ -17,6 +17,7 @@ class Query {
     OrderBy? orderBy,
     int? limit,
     int? offset,
+    bool escapeNames = true,
   }) {
     if (groupBy == null && having != null) {
       throw ArgumentError(
@@ -31,7 +32,11 @@ class Query {
     }
 
     if (columns == null && functions == null) {
-      query.write(' $table.*');
+      if (escapeNames) {
+        query.write(' `$table`.*');
+      } else {
+        query.write(' $table.*');
+      }
     } else {
       if (functions != null && functions.isNotEmpty) {
         query.write(' ');
@@ -43,7 +48,7 @@ class Query {
       }
       if (columns != null && columns.isNotEmpty) {
         query.write(' ');
-        _writeColumns(query, columns, table: table);
+        _writeColumns(query, columns, table: table, escapeNames: escapeNames);
       }
     }
 
@@ -53,8 +58,12 @@ class Query {
         query.write(preload.columns[i]);
       }
     }
-    query.write(' ');
-    query.write('FROM $table');
+
+    if (escapeNames) {
+      query.write(' FROM `$table`');
+    } else {
+      query.write(' FROM $table');
+    }
 
     if (preload != null && preload.join.hasClause()) {
       query.write(' ${preload.join.statement}');
@@ -72,7 +81,11 @@ class Query {
       query.write(' GROUP BY ');
 
       for (int i = 0; i < groupBy.length; i++) {
-        query.write(groupBy[i]);
+        if (escapeNames) {
+          query.write('`${groupBy[i]}`');
+        } else {
+          query.write(groupBy[i]);
+        }
         if (i < groupBy.length - 1) {
           query.write(', ');
         }

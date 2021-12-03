@@ -12,12 +12,17 @@ void main() {
   group('table', () {
     test('table is given table value', () {
       final Delete delete = Delete('table_name');
-      expect(delete.sql, 'DELETE FROM table_name');
+      expect(delete.sql, 'DELETE FROM `table_name`');
     });
 
     test('table name can be empty string', () {
       final Delete delete = Delete('');
-      expect(delete.sql, 'DELETE FROM ');
+      expect(delete.sql, 'DELETE FROM ``');
+    });
+
+    test('escaping names can be disabled', () {
+      final Delete delete = Delete('table_name', escapeNames: false);
+      expect(delete.sql, 'DELETE FROM table_name');
     });
   });
 
@@ -26,7 +31,8 @@ void main() {
       final Where where = Where(table: 'table_name', col: 'col', val: 'val');
       final Delete delete = Delete('table_name', where: where);
 
-      expect(delete.sql, 'DELETE FROM table_name WHERE table_name.col = ?');
+      expect(
+          delete.sql, 'DELETE FROM `table_name` WHERE `table_name`.`col` = ?');
       expect(delete.args, <dynamic>['val']);
     });
 
@@ -35,8 +41,10 @@ void main() {
       where.addIs('col2', 'val2', combinator: WhereCombinator.or);
       final Delete delete = Delete('table_name', where: where);
 
-      expect(delete.sql,
-          'DELETE FROM table_name WHERE table_name.col1 = ? OR col2 IS ?');
+      expect(
+          delete.sql,
+          'DELETE FROM `table_name` '
+          'WHERE `table_name`.`col1` = ? OR `col2` IS ?');
       expect(delete.args, <dynamic>['val1', 'val2']);
     });
 
@@ -45,7 +53,8 @@ void main() {
           table: 'table_name', col: 'col', val: null, type: WhereType.sqfIs);
       final Delete delete = Delete('table_name', where: where);
 
-      expect(delete.sql, 'DELETE FROM table_name WHERE table_name.col IS NULL');
+      expect(delete.sql,
+          'DELETE FROM `table_name` WHERE `table_name`.`col` IS NULL');
       expect(delete.args, <dynamic>[]);
     });
 
@@ -53,7 +62,7 @@ void main() {
       final Where where = Where();
       final Delete delete = Delete('table_name', where: where);
 
-      expect(delete.sql, 'DELETE FROM table_name');
+      expect(delete.sql, 'DELETE FROM `table_name`');
       expect(delete.args, <dynamic>[]);
     });
   });
