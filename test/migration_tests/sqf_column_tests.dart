@@ -371,11 +371,11 @@ void main() {
     test('default value is correct for function', () {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
-        defaultValue: SqfFunction.abs("-42"),
+        defaultValue: SqfFunction.abs("col"),
       );
 
       final String actual = column.sql;
-      const String expected = "`column_name` DEFAULT (ABS(-42))";
+      const String expected = "`column_name` DEFAULT (ABS(`col`))";
 
       expect(actual, expected);
     });
