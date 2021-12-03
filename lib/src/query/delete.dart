@@ -22,6 +22,6 @@ class Delete {
       args = <dynamic>[];
     }
 
-    this.sql = buffer.toString();
+    sql = buffer.toString();
   }
 }
