@@ -12,63 +12,88 @@ void main() {
   group('table', () {
     test('table is given table value', () {
       final Query query = Query('table_name');
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('table name can be empty string', () {
       final Query query = Query('');
-      expect(query.sql, 'SELECT .* FROM ');
+      expect(query.sql, 'SELECT ``.* FROM ``');
+    });
+
+    test('escaping names can be disabled', () {
+      final Query query = Query('table_name', escapeNames: false);
+      expect(query.sql, 'SELECT table_name.* FROM table_name');
     });
   });
 
   group('distinct', () {
     test('distinct is added if true', () {
       final Query query = Query('table_name', distinct: true);
-      expect(query.sql, 'SELECT DISTINCT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT DISTINCT `table_name`.* FROM `table_name`');
     });
 
     test('distinct is not added if false', () {
       final Query query = Query('table_name', distinct: false);
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
+    });
+
+    test('escaping names can be disabled', () {
+      final Query query =
+          Query('table_name', distinct: true, escapeNames: false);
+      expect(query.sql, 'SELECT DISTINCT table_name.* FROM table_name');
     });
   });
 
   group('columns', () {
     test('all columns are selected if not given', () {
       final Query query = Query('table_name');
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('no columns are selected if columns is empty list', () {
       final Query query = Query('table_name', columns: <String>[]);
-      expect(query.sql, 'SELECT FROM table_name');
+      expect(query.sql, 'SELECT FROM `table_name`');
     });
 
     test('single column is selected if given', () {
       final Query query = Query('table_name', columns: <String>['col']);
-      expect(query.sql, 'SELECT table_name.col FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.`col` FROM `table_name`');
     });
 
     test('multiple columns are selected if given', () {
       final Query query =
           Query('table_name', columns: <String>['col1', 'col2', 'col3']);
       expect(
-          query.sql,
-          'SELECT table_name.col1, table_name.col2, table_name.col3 '
-          'FROM table_name');
+        query.sql,
+        'SELECT `table_name`.`col1`, `table_name`.`col2`, `table_name`.`col3` '
+        'FROM `table_name`',
+      );
+    });
+
+    test('escaping names can be disabled', () {
+      final Query query = Query(
+        'table_name',
+        columns: <String>['col1', 'col2', 'col3'],
+        escapeNames: false,
+      );
+      expect(
+        query.sql,
+        'SELECT table_name.col1, table_name.col2, table_name.col3 '
+        'FROM table_name',
+      );
     });
   });
 
   group('functions', () {
     test('no functions are added if functions is empty list', () {
       final Query query = Query('table_name', functions: <SqfFunction>[]);
-      expect(query.sql, 'SELECT FROM table_name');
+      expect(query.sql, 'SELECT FROM `table_name`');
     });
 
     test('single function is added if given', () {
       final Query query =
           Query('table_name', functions: <SqfFunction>[SqfFunction.min('col')]);
-      expect(query.sql, 'SELECT MIN(col) FROM table_name');
+      expect(query.sql, 'SELECT MIN(`col`) FROM `table_name`');
     });
 
     test('multiple columns are selected if given', () {
@@ -79,7 +104,7 @@ void main() {
           SqfFunction.max('col2'),
         ],
       );
-      expect(query.sql, 'SELECT MIN(col1), MAX(col2) FROM table_name');
+      expect(query.sql, 'SELECT MIN(`col1`), MAX(`col2`) FROM `table_name`');
     });
 
     test('both columns and functions are added', () {
@@ -93,9 +118,9 @@ void main() {
       );
       expect(
           query.sql,
-          'SELECT MIN(col1) AS val1, MAX(col2) AS val2, '
-          'table_name.col1, table_name.col2, table_name.col3 '
-          'FROM table_name');
+          'SELECT MIN(`col1`) AS `val1`, MAX(`col2`) AS `val2`, '
+          '`table_name`.`col1`, `table_name`.`col2`, `table_name`.`col3` '
+          'FROM `table_name`');
     });
   });
 
@@ -104,8 +129,10 @@ void main() {
       final Where where = Where(table: 'table_name', col: 'col', val: 'val');
       final Query query = Query('table_name', where: where);
 
-      expect(query.sql,
-          'SELECT table_name.* FROM table_name WHERE table_name.col = ?');
+      expect(
+          query.sql,
+          'SELECT `table_name`.* FROM `table_name` '
+          'WHERE `table_name`.`col` = ?');
       expect(query.args, <dynamic>['val']);
     });
 
@@ -116,8 +143,8 @@ void main() {
 
       expect(
           query.sql,
-          'SELECT table_name.* FROM table_name '
-          'WHERE table_name.col1 = ? OR col2 IS ?');
+          'SELECT `table_name`.* FROM `table_name` '
+          'WHERE `table_name`.`col1` = ? OR `col2` IS ?');
       expect(query.args, <dynamic>['val1', 'val2']);
     });
 
@@ -126,8 +153,10 @@ void main() {
           table: 'table_name', col: 'col', val: null, type: WhereType.sqfIs);
       final Query query = Query('table_name', where: where);
 
-      expect(query.sql,
-          'SELECT table_name.* FROM table_name WHERE table_name.col IS NULL');
+      expect(
+          query.sql,
+          'SELECT `table_name`.* FROM `table_name` '
+          'WHERE `table_name`.`col` IS NULL');
       expect(query.args, <dynamic>[]);
     });
 
@@ -138,8 +167,8 @@ void main() {
 
       expect(
           query.sql,
-          'SELECT table_name.col1, table_name.col2 FROM table_name '
-          'WHERE table_name.col = ?');
+          'SELECT `table_name`.`col1`, `table_name`.`col2` FROM `table_name` '
+          'WHERE `table_name`.`col` = ?');
       expect(query.args, <dynamic>['val']);
     });
 
@@ -147,7 +176,7 @@ void main() {
       final Where where = Where();
       final Query query = Query('table_name', where: where);
 
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
       expect(query.args, <dynamic>[]);
     });
   });
@@ -165,11 +194,11 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.*, '
-        'parent.col1 AS _parent_col1, '
-        'parent.col2 AS _parent_col2, '
-        'parent.col3 AS _parent_col3 '
-        'FROM child LEFT JOIN parent ON parent.pfkey = child.ckey',
+        'SELECT `child`.*, '
+        '`parent`.`col1` AS `_parent_col1`, '
+        '`parent`.`col2` AS `_parent_col2`, '
+        '`parent`.`col3` AS `_parent_col3` '
+        'FROM `child` LEFT JOIN `parent` ON `parent`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -186,12 +215,12 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.*, '
-        'parent1.col AS _parent1_col, '
-        'parent2.col AS _parent2_col '
-        'FROM child '
-        'LEFT JOIN parent1 ON parent1.pfkey = child.ckey '
-        'LEFT JOIN parent2 ON parent2.pfkey = child.ckey',
+        'SELECT `child`.*, '
+        '`parent1`.`col` AS `_parent1_col`, '
+        '`parent2`.`col` AS `_parent2_col` '
+        'FROM `child` '
+        'LEFT JOIN `parent1` ON `parent1`.`pfkey` = `child`.`ckey` '
+        'LEFT JOIN `parent2` ON `parent2`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -199,7 +228,7 @@ void main() {
       final Preload preload = Preload();
       final Query query = Query('child', preload: preload);
 
-      expect(query.sql, 'SELECT child.* FROM child');
+      expect(query.sql, 'SELECT `child`.* FROM `child`');
     });
 
     test('multiple columns can be added', () {
@@ -215,11 +244,11 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.col1, child.col2, '
-        'parent.col1 AS _parent_col1, '
-        'parent.col2 AS _parent_col2, '
-        'parent.col3 AS _parent_col3 '
-        'FROM child LEFT JOIN parent ON parent.pfkey = child.ckey',
+        'SELECT `child`.`col1`, `child`.`col2`, '
+        '`parent`.`col1` AS `_parent_col1`, '
+        '`parent`.`col2` AS `_parent_col2`, '
+        '`parent`.`col3` AS `_parent_col3` '
+        'FROM `child` LEFT JOIN `parent` ON `parent`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -236,10 +265,10 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.*, '
-        'parent.col1 AS _parent_col1 '
-        'FROM child LEFT JOIN parent ON parent.pfkey = child.ckey '
-        'WHERE child.ckey = ?',
+        'SELECT `child`.*, '
+        '`parent`.`col1` AS `_parent_col1` '
+        'FROM `child` LEFT JOIN `parent` ON `parent`.`pfkey` = `child`.`ckey` '
+        'WHERE `child`.`ckey` = ?',
       );
       expect(query.args, <String>['val']);
     });
@@ -257,8 +286,8 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.* FROM child '
-        'LEFT JOIN parent ON parent.pfkey = child.ckey',
+        'SELECT `child`.* FROM `child` '
+        'LEFT JOIN `parent` ON `parent`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -275,9 +304,9 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.* FROM child '
-        'LEFT JOIN parent1 ON parent1.pfkey = child.ckey '
-        'CROSS JOIN parent2 ON parent2.pfkey = child.ckey',
+        'SELECT `child`.* FROM `child` '
+        'LEFT JOIN `parent1` ON `parent1`.`pfkey` = `child`.`ckey` '
+        'CROSS JOIN `parent2` ON `parent2`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -285,7 +314,7 @@ void main() {
       final Join join = Join();
       final Query query = Query('child', join: join);
 
-      expect(query.sql, 'SELECT child.* FROM child');
+      expect(query.sql, 'SELECT `child`.* FROM `child`');
     });
 
     test('preloads and joins can be added', () {
@@ -307,13 +336,13 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.*, '
-        'parent1.col1 AS _parent1_col1, '
-        'parent1.col2 AS _parent1_col2, '
-        'parent1.col3 AS _parent1_col3 '
-        'FROM child '
-        'LEFT JOIN parent1 ON parent1.pfkey = child.ckey '
-        'INNER JOIN parent2 ON parent2.pfkey = child.ckey',
+        'SELECT `child`.*, '
+        '`parent1`.`col1` AS `_parent1_col1`, '
+        '`parent1`.`col2` AS `_parent1_col2`, '
+        '`parent1`.`col3` AS `_parent1_col3` '
+        'FROM `child` '
+        'LEFT JOIN `parent1` ON `parent1`.`pfkey` = `child`.`ckey` '
+        'INNER JOIN `parent2` ON `parent2`.`pfkey` = `child`.`ckey`',
       );
     });
 
@@ -329,9 +358,9 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT child.* FROM child '
-        'LEFT JOIN parent ON parent.pfkey = child.ckey '
-        'WHERE child.ckey = ?',
+        'SELECT `child`.* FROM `child` '
+        'LEFT JOIN `parent` ON `parent`.`pfkey` = `child`.`ckey` '
+        'WHERE `child`.`ckey` = ?',
       );
       expect(query.args, <String>['val']);
     });
@@ -340,24 +369,27 @@ void main() {
   group('groupBy', () {
     test('is added to query', () {
       final Query query = Query('table_name', groupBy: <String>['col']);
-      expect(query.sql, 'SELECT table_name.* FROM table_name GROUP BY col');
+      expect(
+          query.sql, 'SELECT `table_name`.* FROM `table_name` GROUP BY `col`');
     });
 
     test('multiple columns is added to query', () {
       final Query query =
           Query('table_name', groupBy: <String>['col1', 'col2', 'col3']);
-      expect(query.sql,
-          'SELECT table_name.* FROM table_name GROUP BY col1, col2, col3');
+      expect(
+          query.sql,
+          'SELECT `table_name`.* '
+          'FROM `table_name` GROUP BY `col1`, `col2`, `col3`');
     });
 
     test('is not added if null', () {
       final Query query = Query('table_name', groupBy: null);
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('is not added if empty list', () {
       final Query query = Query('table_name', groupBy: <String>[]);
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('can be added after where', () {
@@ -367,29 +399,42 @@ void main() {
 
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name '
-        'WHERE table_name.col = ? '
-        'GROUP BY col',
+        'SELECT `table_name`.* FROM `table_name` '
+        'WHERE `table_name`.`col` = ? '
+        'GROUP BY `col`',
       );
       expect(query.args, <String>['val']);
+    });
+
+    test('escaping names can be disabled', () {
+      final Query query = Query(
+        'table_name',
+        groupBy: <String>['col1', 'col2'],
+        escapeNames: false,
+      );
+      expect(
+          query.sql, 'SELECT table_name.* FROM table_name GROUP BY col1, col2');
     });
   });
 
   group('having', () {
     test('throws argument error if groupBy is null', () {
       expect(() {
-        Query('table_name', having: 'COUNT(table_name.col) > val');
+        Query('table_name', having: 'COUNT(`table_name`.`col`) > val');
       }, throwsA(isA<ArgumentError>()));
     });
 
     test('is added to query', () {
-      final Query query = Query('table_name',
-          groupBy: <String>['col'], having: 'COUNT(table_name.col) > val');
+      final Query query = Query(
+        'table_name',
+        groupBy: <String>['col'],
+        having: 'COUNT(`table_name`.`col`) > `val`',
+      );
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name '
-        'GROUP BY col '
-        'HAVING COUNT(table_name.col) > val',
+        'SELECT `table_name`.* FROM `table_name` '
+        'GROUP BY `col` '
+        'HAVING COUNT(`table_name`.`col`) > `val`',
       );
     });
 
@@ -398,8 +443,8 @@ void main() {
           Query('table_name', groupBy: <String>['col'], having: '');
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name '
-        'GROUP BY col '
+        'SELECT `table_name`.* FROM `table_name` '
+        'GROUP BY `col` '
         'HAVING ',
       );
     });
@@ -410,7 +455,8 @@ void main() {
         groupBy: <String>['col'],
         having: null,
       );
-      expect(query.sql, 'SELECT table_name.* FROM table_name GROUP BY col');
+      expect(
+          query.sql, 'SELECT `table_name`.* FROM `table_name` GROUP BY `col`');
     });
   });
 
@@ -419,8 +465,10 @@ void main() {
       final OrderBy orderBy =
           OrderBy(table: 'table_name', col: 'col', orderType: OrderType.asc);
       final Query query = Query('table_name', orderBy: orderBy);
-      expect(query.sql,
-          'SELECT table_name.* FROM table_name ORDER BY table_name.col ASC');
+      expect(
+          query.sql,
+          'SELECT `table_name`.* FROM `table_name` '
+          'ORDER BY `table_name`.`col` ASC');
     });
 
     test('multiple orderings is added to query', () {
@@ -431,19 +479,19 @@ void main() {
       final Query query = Query('table_name', orderBy: orderBy);
       expect(
           query.sql,
-          'SELECT table_name.* FROM table_name '
-          'ORDER BY table_name.col1 ASC, col2 DESC');
+          'SELECT `table_name`.* FROM `table_name` '
+          'ORDER BY `table_name`.`col1` ASC, `col2` DESC');
     });
 
     test('is not added if null', () {
       final Query query = Query('table_name', orderBy: null);
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('is not added if empty', () {
       final OrderBy orderBy = OrderBy();
       final Query query = Query('table_name', orderBy: orderBy);
-      expect(query.sql, 'SELECT table_name.* FROM table_name');
+      expect(query.sql, 'SELECT `table_name`.* FROM `table_name`');
     });
 
     test('can be added after having', () {
@@ -452,14 +500,14 @@ void main() {
 
       final Query query = Query('table_name',
           groupBy: <String>['col'],
-          having: 'COUNT(table_name.col) > val',
+          having: 'COUNT(`table_name`.`col`) > `val`',
           orderBy: orderBy);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name '
-        'GROUP BY col '
-        'HAVING COUNT(table_name.col) > val '
-        'ORDER BY table_name.col ASC',
+        'SELECT `table_name`.* FROM `table_name` '
+        'GROUP BY `col` '
+        'HAVING COUNT(`table_name`.`col`) > `val` '
+        'ORDER BY `table_name`.`col` ASC',
       );
     });
   });
@@ -469,7 +517,7 @@ void main() {
       final Query query = Query('table_name', limit: 40);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name LIMIT 40',
+        'SELECT `table_name`.* FROM `table_name` LIMIT 40',
       );
     });
 
@@ -477,7 +525,7 @@ void main() {
       final Query query = Query('table_name', limit: null);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name',
+        'SELECT `table_name`.* FROM `table_name`',
       );
     });
 
@@ -488,8 +536,8 @@ void main() {
       final Query query = Query('table_name', orderBy: orderBy, limit: 0);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name '
-        'ORDER BY table_name.col ASC LIMIT 0',
+        'SELECT `table_name`.* FROM `table_name` '
+        'ORDER BY `table_name`.`col` ASC LIMIT 0',
       );
     });
   });
@@ -499,7 +547,7 @@ void main() {
       final Query query = Query('table_name', offset: 40);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name OFFSET 40',
+        'SELECT `table_name`.* FROM `table_name` OFFSET 40',
       );
     });
 
@@ -507,7 +555,7 @@ void main() {
       final Query query = Query('table_name', offset: null);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name',
+        'SELECT `table_name`.* FROM `table_name`',
       );
     });
 
@@ -515,7 +563,7 @@ void main() {
       final Query query = Query('table_name', limit: -1, offset: 0);
       expect(
         query.sql,
-        'SELECT table_name.* FROM table_name LIMIT -1 OFFSET 0',
+        'SELECT `table_name`.* FROM `table_name` LIMIT -1 OFFSET 0',
       );
     });
   });
@@ -545,7 +593,7 @@ void main() {
           refKey: 'pfkey',
         ),
         groupBy: <String>['col1'],
-        having: 'COUNT(table_name.col) > 10',
+        having: 'COUNT(`table_name`.`col`) > 10',
         orderBy: OrderBy(
           table: 'table',
           col: 'col1',
@@ -557,17 +605,17 @@ void main() {
 
       expect(
           query.sql,
-          'SELECT DISTINCT table.col1, table.col2, table.col3, '
-          'parent1.pcol1 AS _parent1_pcol1, '
-          'parent1.pcol2 AS _parent1_pcol2, '
-          'parent1.pcol3 AS _parent1_pcol3 '
-          'FROM table '
-          'LEFT JOIN parent1 ON parent1.pfkey = table.ckey '
-          'LEFT JOIN table ON table.fkey = parent2.pfkey '
-          'WHERE table.col1 = ? '
-          'GROUP BY col1 '
-          'HAVING COUNT(table_name.col) > 10 '
-          'ORDER BY table.col1 DESC '
+          'SELECT DISTINCT `table`.`col1`, `table`.`col2`, `table`.`col3`, '
+          '`parent1`.`pcol1` AS `_parent1_pcol1`, '
+          '`parent1`.`pcol2` AS `_parent1_pcol2`, '
+          '`parent1`.`pcol3` AS `_parent1_pcol3` '
+          'FROM `table` '
+          'LEFT JOIN `parent1` ON `parent1`.`pfkey` = `table`.`ckey` '
+          'LEFT JOIN `table` ON `table`.`fkey` = `parent2`.`pfkey` '
+          'WHERE `table`.`col1` = ? '
+          'GROUP BY `col1` '
+          'HAVING COUNT(`table_name`.`col`) > 10 '
+          'ORDER BY `table`.`col1` DESC '
           'LIMIT 10 '
           'OFFSET 5');
       expect(query.args, <dynamic>[1]);

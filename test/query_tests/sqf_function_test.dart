@@ -10,6 +10,15 @@ void main() {
 
     test('alias can be added in constructor', () {
       final SqfFunction function = SqfFunction('FUNC(*)', alias: 'alias');
+      expect(function.sql, 'FUNC(*) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction(
+        'FUNC(*)',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'FUNC(*) AS alias');
     });
   });
@@ -17,11 +26,20 @@ void main() {
   group('abs', () {
     test('abs function is created', () {
       final SqfFunction function = SqfFunction.abs('parameter');
-      expect(function.sql, 'ABS(parameter)');
+      expect(function.sql, 'ABS(`parameter`)');
     });
 
     test('abs function is created with alias', () {
       final SqfFunction function = SqfFunction.abs('parameter', alias: 'alias');
+      expect(function.sql, 'ABS(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.abs(
+        'parameter',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'ABS(parameter) AS alias');
     });
   });
@@ -29,11 +47,20 @@ void main() {
   group('avg', () {
     test('avg function is created', () {
       final SqfFunction function = SqfFunction.avg('parameter');
-      expect(function.sql, 'AVG(parameter)');
+      expect(function.sql, 'AVG(`parameter`)');
     });
 
     test('avg function is created with alias', () {
       final SqfFunction function = SqfFunction.avg('parameter', alias: 'alias');
+      expect(function.sql, 'AVG(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.avg(
+        'parameter',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'AVG(parameter) AS alias');
     });
   });
@@ -41,12 +68,18 @@ void main() {
   group('count', () {
     test('count function is created', () {
       final SqfFunction function = SqfFunction.count('parameter');
-      expect(function.sql, 'COUNT(parameter)');
+      expect(function.sql, 'COUNT(`parameter`)');
     });
 
     test('count function is created with alias', () {
       final SqfFunction function =
           SqfFunction.count('parameter', alias: 'alias');
+      expect(function.sql, 'COUNT(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function =
+          SqfFunction.count('parameter', alias: 'alias', escapeNames: false);
       expect(function.sql, 'COUNT(parameter) AS alias');
     });
   });
@@ -54,11 +87,20 @@ void main() {
   group('max', () {
     test('max function is created', () {
       final SqfFunction function = SqfFunction.max('parameter');
-      expect(function.sql, 'MAX(parameter)');
+      expect(function.sql, 'MAX(`parameter`)');
     });
 
     test('max function is created with alias', () {
       final SqfFunction function = SqfFunction.max('parameter', alias: 'alias');
+      expect(function.sql, 'MAX(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.max(
+        'parameter',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'MAX(parameter) AS alias');
     });
   });
@@ -66,11 +108,20 @@ void main() {
   group('min', () {
     test('min function is created', () {
       final SqfFunction function = SqfFunction.min('parameter');
-      expect(function.sql, 'MIN(parameter)');
+      expect(function.sql, 'MIN(`parameter`)');
     });
 
     test('min function is created with alias', () {
       final SqfFunction function = SqfFunction.min('parameter', alias: 'alias');
+      expect(function.sql, 'MIN(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.min(
+        'parameter',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'MIN(parameter) AS alias');
     });
   });
@@ -83,6 +134,14 @@ void main() {
 
     test('random function is created with alias', () {
       final SqfFunction function = SqfFunction.random(alias: 'alias');
+      expect(function.sql, 'RANDOM() AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.random(
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'RANDOM() AS alias');
     });
   });
@@ -90,30 +149,49 @@ void main() {
   group('round', () {
     test('round function is created', () {
       final SqfFunction function = SqfFunction.round('parameter');
-      expect(function.sql, 'ROUND(parameter)');
+      expect(function.sql, 'ROUND(`parameter`)');
     });
 
     test('round function is created with optional parameter', () {
       final SqfFunction function =
           SqfFunction.round('parameter', decimalPlaces: 4);
-      expect(function.sql, 'ROUND(parameter, 4)');
+      expect(function.sql, 'ROUND(`parameter`, 4)');
     });
 
     test('round function is created with alias', () {
       final SqfFunction function =
           SqfFunction.round('parameter', alias: 'alias');
-      expect(function.sql, 'ROUND(parameter) AS alias');
+      expect(function.sql, 'ROUND(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.round(
+        'parameter',
+        decimalPlaces: 1000,
+        alias: 'alias',
+        escapeNames: false,
+      );
+      expect(function.sql, 'ROUND(parameter, 1000) AS alias');
     });
   });
 
   group('sum', () {
     test('sum function is created', () {
       final SqfFunction function = SqfFunction.sum('parameter');
-      expect(function.sql, 'SUM(parameter)');
+      expect(function.sql, 'SUM(`parameter`)');
     });
 
     test('sum function is created with alias', () {
       final SqfFunction function = SqfFunction.sum('parameter', alias: 'alias');
+      expect(function.sql, 'SUM(`parameter`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.sum(
+        'parameter',
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'SUM(parameter) AS alias');
     });
   });
@@ -122,12 +200,12 @@ void main() {
     test('coalesce function is created', () {
       final SqfFunction function =
           SqfFunction.coalesce(<String>['param1', 'param2']);
-      expect(function.sql, 'COALESCE(param1, param2)');
+      expect(function.sql, 'COALESCE(`param1`, `param2`)');
     });
 
     test('coalesce function is created with one parameter', () {
       final SqfFunction function = SqfFunction.coalesce(<String>['param1']);
-      expect(function.sql, 'COALESCE(param1)');
+      expect(function.sql, 'COALESCE(`param1`)');
     });
 
     test('coalesce function is created with no parameters', () {
@@ -138,6 +216,15 @@ void main() {
     test('coalesce function is created with alias', () {
       final SqfFunction function =
           SqfFunction.coalesce(<String>['param1', 'param2'], alias: 'alias');
+      expect(function.sql, 'COALESCE(`param1`, `param2`) AS `alias`');
+    });
+
+    test('escaping names can be disabled', () {
+      final SqfFunction function = SqfFunction.coalesce(
+        <String>['param1', 'param2'],
+        alias: 'alias',
+        escapeNames: false,
+      );
       expect(function.sql, 'COALESCE(param1, param2) AS alias');
     });
   });

@@ -20,6 +20,7 @@ class Insert {
     Where? rowIdConstraint,
     List<String>? upsertConflictValues,
     Update? upsertAction,
+    bool escapeNames = true,
   }) {
     if (upsertConflictValues != null || upsertAction != null) {
       if (conflictAlgorithm != null) {
@@ -43,7 +44,11 @@ class Insert {
       insert.write(' ${_conflictValues[conflictAlgorithm.index]}');
     }
     insert.write(' INTO ');
-    insert.write(table);
+    if (escapeNames) {
+      insert.write('`$table`');
+    } else {
+      insert.write(table);
+    }
     insert.write(' (');
 
     final List<dynamic> bindArgs = <dynamic>[];
@@ -53,9 +58,14 @@ class Insert {
       final StringBuffer sbValues = StringBuffer(') VALUES (');
 
       if (rowIdConstraint != null && rowIdConstraint.hasClause()) {
-        insert.write('rowid, ');
-        sbValues.write('(SELECT rowid FROM $table '
-            'WHERE ${rowIdConstraint.statement}), ');
+        if (escapeNames) {
+          insert.write('`rowid`, ');
+          sbValues.write('(SELECT `rowid` FROM `$table` ');
+        } else {
+          insert.write('rowid, ');
+          sbValues.write('(SELECT rowid FROM $table ');
+        }
+        sbValues.write('WHERE ${rowIdConstraint.statement}), ');
         bindArgs.addAll(rowIdConstraint.args);
       }
 
@@ -66,7 +76,11 @@ class Insert {
           sbValues.write(', ');
         }
 
-        insert.write(colName);
+        if (escapeNames) {
+          insert.write('`$colName`');
+        } else {
+          insert.write(colName);
+        }
 
         if (value == null) {
           sbValues.write('NULL');
@@ -83,11 +97,19 @@ class Insert {
       }
 
       if (rowIdConstraint != null && rowIdConstraint.hasClause()) {
-        insert.write('rowid) VALUES ((SELECT rowid FROM $table '
-            'WHERE ${rowIdConstraint.statement})');
+        if (escapeNames) {
+          insert.write('`rowid`) VALUES ((SELECT `rowid` FROM `$table` ');
+        } else {
+          insert.write('rowid) VALUES ((SELECT rowid FROM $table ');
+        }
+        insert.write('WHERE ${rowIdConstraint.statement})');
         bindArgs.addAll(rowIdConstraint.args);
       } else {
-        insert.write('$nullColumnHack) VALUES (NULL');
+        if (escapeNames) {
+          insert.write('`$nullColumnHack`) VALUES (NULL');
+        } else {
+          insert.write('$nullColumnHack) VALUES (NULL');
+        }
       }
     }
     insert.write(')');
@@ -96,7 +118,7 @@ class Insert {
 
     if (upsertConflictValues != null) {
       insert.write(' ON CONFLICT (');
-      _writeColumns(insert, upsertConflictValues);
+      _writeColumns(insert, upsertConflictValues, escapeNames: escapeNames);
       insert.write(') DO ${upsertAction!.sql}');
 
       args.addAll(upsertAction.args);

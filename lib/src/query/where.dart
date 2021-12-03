@@ -13,31 +13,80 @@ class Where {
     WhereCombinator? combinator,
     WhereType? type,
     bool not = false,
+    bool escapeNames = true,
   }) {
     if (table != null || col != null || val != null) {
       assert(col != null);
 
       if (type == null) {
         if (val == null) {
-          addIs(col!, val, table: table, not: not, combinator: combinator);
+          addIs(
+            col!,
+            val,
+            table: table,
+            not: not,
+            combinator: combinator,
+            escapeNames: escapeNames,
+          );
         } else {
-          addEquals(col!, val, table: table, not: not, combinator: combinator);
+          addEquals(
+            col!,
+            val,
+            table: table,
+            not: not,
+            combinator: combinator,
+            escapeNames: escapeNames,
+          );
         }
       } else {
         if (val == null) {
           if (type == WhereType.sqfIn) {
-            addIn(col!, val, table: table, not: not, combinator: combinator);
+            addIn(
+              col!,
+              val,
+              table: table,
+              not: not,
+              combinator: combinator,
+              escapeNames: escapeNames,
+            );
           } else {
-            addIs(col!, val, table: table, not: not, combinator: combinator);
+            addIs(
+              col!,
+              val,
+              table: table,
+              not: not,
+              combinator: combinator,
+              escapeNames: escapeNames,
+            );
           }
         } else {
           if (type == WhereType.sqfIn) {
-            addIn(col!, val, table: table, not: not, combinator: combinator);
+            addIn(
+              col!,
+              val,
+              table: table,
+              not: not,
+              combinator: combinator,
+              escapeNames: escapeNames,
+            );
           } else if (type == WhereType.sqfIs) {
-            addIs(col!, val, table: table, not: not, combinator: combinator);
+            addIs(
+              col!,
+              val,
+              table: table,
+              not: not,
+              combinator: combinator,
+              escapeNames: escapeNames,
+            );
           } else {
-            addEquals(col!, val,
-                table: table, not: not, combinator: combinator);
+            addEquals(
+              col!,
+              val,
+              table: table,
+              not: not,
+              combinator: combinator,
+              escapeNames: escapeNames,
+            );
           }
         }
       }
@@ -73,12 +122,14 @@ class Where {
     String? table,
     WhereCombinator? combinator,
     bool not = false,
+    bool escapeNames = true,
   }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
-    if (table != null) buffer.write('$table.');
-    buffer.write('$col $condition ');
+    if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
+    buffer.write(escapeNames ? '`$col`' : col);
+    buffer.write(' $condition ');
 
     if (value == null) {
       buffer.write('NULL');
@@ -97,12 +148,13 @@ class Where {
     String? table,
     WhereCombinator? combinator,
     bool not = false,
+    bool escapeNames = true,
   }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
-    if (table != null) buffer.write('$table.');
-    buffer.write(col);
+    if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
+    buffer.write(escapeNames ? '`$col`' : col);
 
     if (not) {
       buffer.write(' != ');
@@ -127,12 +179,13 @@ class Where {
     String? table,
     WhereCombinator? combinator,
     bool not = false,
+    bool escapeNames = true,
   }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
-    if (table != null) buffer.write('$table.');
-    buffer.write(col);
+    if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
+    buffer.write(escapeNames ? '`$col`' : col);
 
     if (not) {
       buffer.write(' NOT IN ');
@@ -163,12 +216,13 @@ class Where {
     String? table,
     WhereCombinator? combinator,
     bool not = false,
+    bool escapeNames = true,
   }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
-    if (table != null) buffer.write('$table.');
-    buffer.write(col);
+    if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
+    buffer.write(escapeNames ? '`$col`' : col);
 
     if (not) {
       buffer.write(' NOT IN ');
@@ -189,12 +243,13 @@ class Where {
     String? table,
     WhereCombinator? combinator,
     bool not = false,
+    bool escapeNames = true,
   }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_statement);
     buffer.write(_getCombinator(combinator));
-    if (table != null) buffer.write('$table.');
-    buffer.write(col);
+    if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
+    buffer.write(escapeNames ? '`$col`' : col);
 
     if (not) {
       buffer.write(' IS NOT ');
