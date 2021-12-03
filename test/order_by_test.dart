@@ -5,7 +5,7 @@ void main() {
   group('constructor', () {
     test('ordering is added', () {
       final OrderBy orderBy = OrderBy(col: 'col', orderType: OrderType.desc);
-      expect(orderBy.sql, 'col DESC');
+      expect(orderBy.sql, '`col` DESC');
     });
 
     test('sql is initially empty string', () {
@@ -50,19 +50,28 @@ void main() {
     test('table name is optional', () {
       final OrderBy orderBy =
           OrderBy(table: 'table', col: 'col', orderType: OrderType.desc);
-      expect(orderBy.sql, 'table.col DESC');
+      expect(orderBy.sql, '`table`.`col` DESC');
     });
 
     test('null order is inverted if order type is ascending', () {
       final OrderBy orderBy =
           OrderBy(col: 'col', orderType: OrderType.asc, invertNullOrder: true);
-      expect(orderBy.sql, 'col ASC NULLS LAST');
+      expect(orderBy.sql, '`col` ASC NULLS LAST');
     });
 
     test('null order is inverted if order type is descending', () {
       final OrderBy orderBy =
           OrderBy(col: 'col', orderType: OrderType.desc, invertNullOrder: true);
-      expect(orderBy.sql, 'col DESC NULLS FIRST');
+      expect(orderBy.sql, '`col` DESC NULLS FIRST');
+    });
+
+    test('escaping names can be disabled', () {
+      final OrderBy orderBy = OrderBy(
+        col: 'col',
+        orderType: OrderType.desc,
+        escapeNames: false,
+      );
+      expect(orderBy.sql, 'col DESC');
     });
   });
 
@@ -70,19 +79,19 @@ void main() {
     test('ordering is added with ASC', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col', OrderType.asc);
-      expect(orderBy.sql, 'col ASC');
+      expect(orderBy.sql, '`col` ASC');
     });
 
     test('ordering is added with DESC', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col', OrderType.desc);
-      expect(orderBy.sql, 'col DESC');
+      expect(orderBy.sql, '`col` DESC');
     });
 
     test('table name can be added', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col', OrderType.desc, table: 'table');
-      expect(orderBy.sql, 'table.col DESC');
+      expect(orderBy.sql, '`table`.`col` DESC');
     });
 
     test('multiple orders can be added', () {
@@ -90,51 +99,57 @@ void main() {
       orderBy.orderBy('col1', OrderType.asc);
       orderBy.orderBy('col2', OrderType.desc);
 
-      expect(orderBy.sql, 'col1 ASC, col2 DESC');
+      expect(orderBy.sql, '`col1` ASC, `col2` DESC');
     });
 
     test('col can be empty string', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('', OrderType.asc);
 
-      expect(orderBy.sql, ' ASC');
+      expect(orderBy.sql, '`` ASC');
     });
 
     test('null order is inverted if order type is ascending', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col', OrderType.asc, invertNullOrder: true);
 
-      expect(orderBy.sql, 'col ASC NULLS LAST');
+      expect(orderBy.sql, '`col` ASC NULLS LAST');
     });
 
     test('null order is inverted if order type is descending', () {
       final OrderBy orderBy = OrderBy();
       orderBy.orderBy('col', OrderType.desc, invertNullOrder: true);
 
-      expect(orderBy.sql, 'col DESC NULLS FIRST');
+      expect(orderBy.sql, '`col` DESC NULLS FIRST');
+    });
+
+    test('escaping names can be disabled', () {
+      final OrderBy orderBy = OrderBy();
+      orderBy.orderBy('col', OrderType.asc, escapeNames: false);
+      expect(orderBy.sql, 'col ASC');
     });
   });
 
   group('customOrderBy', () {
     test('ordering is added with ASC', () {
       final OrderBy customOrderBy = OrderBy();
-      customOrderBy.customOrderBy('COALESCE(col, 0)', OrderType.asc);
-      expect(customOrderBy.sql, 'COALESCE(col, 0) ASC');
+      customOrderBy.customOrderBy('COALESCE(`col`, 0)', OrderType.asc);
+      expect(customOrderBy.sql, 'COALESCE(`col`, 0) ASC');
     });
 
     test('ordering is added with DESC', () {
       final OrderBy customOrderBy = OrderBy();
-      customOrderBy.customOrderBy('COALESCE(col, 0)', OrderType.desc);
-      expect(customOrderBy.sql, 'COALESCE(col, 0) DESC');
+      customOrderBy.customOrderBy('COALESCE(`col`, 0)', OrderType.desc);
+      expect(customOrderBy.sql, 'COALESCE(`col`, 0) DESC');
     });
 
     test('multiple orders can be added', () {
       final OrderBy customOrderBy = OrderBy();
-      customOrderBy.customOrderBy('COALESCE(col1, 0)', OrderType.asc);
-      customOrderBy.customOrderBy('MAX(COALESCE(col2, 0))', OrderType.desc);
+      customOrderBy.customOrderBy('COALESCE(`col1`, 0)', OrderType.asc);
+      customOrderBy.customOrderBy('MAX(COALESCE(`col2`, 0))', OrderType.desc);
 
       expect(customOrderBy.sql,
-          'COALESCE(col1, 0) ASC, MAX(COALESCE(col2, 0)) DESC');
+          'COALESCE(`col1`, 0) ASC, MAX(COALESCE(`col2`, 0)) DESC');
     });
 
     test('col can be empty string', () {
@@ -146,16 +161,16 @@ void main() {
 
     test('null order is inverted if order type is ascending', () {
       final OrderBy orderBy = OrderBy();
-      orderBy.customOrderBy('col', OrderType.asc, invertNullOrder: true);
+      orderBy.customOrderBy('`col`', OrderType.asc, invertNullOrder: true);
 
-      expect(orderBy.sql, 'col ASC NULLS LAST');
+      expect(orderBy.sql, '`col` ASC NULLS LAST');
     });
 
     test('null order is inverted if order type is descending', () {
       final OrderBy orderBy = OrderBy();
-      orderBy.customOrderBy('col', OrderType.desc, invertNullOrder: true);
+      orderBy.customOrderBy('`col`', OrderType.desc, invertNullOrder: true);
 
-      expect(orderBy.sql, 'col DESC NULLS FIRST');
+      expect(orderBy.sql, '`col` DESC NULLS FIRST');
     });
   });
 }

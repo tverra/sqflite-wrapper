@@ -166,6 +166,24 @@ void main() {
       );
 
       expect(preload.columns, <String>[
+        '`parent_table_name`.`parent_column1` AS `_parent_table_name_parent_column1`',
+        '`parent_table_name`.`parent_column2` AS `_parent_table_name_parent_column2`',
+        '`parent_table_name`.`parent_column3` AS `_parent_table_name_parent_column3`',
+      ]);
+    });
+
+    test('escaping names can be disabled when adding columns to list', () {
+      final Preload preload = Preload();
+      preload.add(
+        'parent_table_name',
+        'parent_fkey',
+        'child_table_name',
+        'child_pkey',
+        _parentColumns,
+        escapeNames: false,
+      );
+
+      expect(preload.columns, <String>[
         'parent_table_name.parent_column1 AS _parent_table_name_parent_column1',
         'parent_table_name.parent_column2 AS _parent_table_name_parent_column2',
         'parent_table_name.parent_column3 AS _parent_table_name_parent_column3',
@@ -180,6 +198,28 @@ void main() {
         'child_table_name',
         'child_pkey',
         _parentColumns,
+      );
+
+      expect(
+        preload.getColumnString(),
+        '`parent_table_name`.`parent_column1` AS '
+        '`_parent_table_name_parent_column1`, '
+        '`parent_table_name`.`parent_column2` AS '
+        '`_parent_table_name_parent_column2`, '
+        '`parent_table_name`.`parent_column3` AS '
+        '`_parent_table_name_parent_column3`',
+      );
+    });
+
+    test('escaping names can be disabled when adding columns to string', () {
+      final Preload preload = Preload();
+      preload.add(
+        'parent_table_name',
+        'parent_fkey',
+        'child_table_name',
+        'child_pkey',
+        _parentColumns,
+        escapeNames: false,
       );
 
       expect(
@@ -218,19 +258,19 @@ void main() {
       );
 
       expect(preload.columns, <String>[
-        'parent_table_name1.parent_column1 AS _parent_table_name1_parent_column1',
-        'parent_table_name1.parent_column2 AS _parent_table_name1_parent_column2',
-        'parent_table_name1.parent_column3 AS _parent_table_name1_parent_column3',
-        'parent_table_name2.parent_column1 AS _parent_table_name2_parent_column1',
-        'parent_table_name2.parent_column2 AS _parent_table_name2_parent_column2',
-        'parent_table_name2.parent_column3 AS _parent_table_name2_parent_column3',
-        'parent_table_name3.parent_column1 AS _parent_table_name3_parent_column1',
-        'parent_table_name3.parent_column2 AS _parent_table_name3_parent_column2',
-        'parent_table_name3.parent_column3 AS _parent_table_name3_parent_column3'
+        '`parent_table_name1`.`parent_column1` AS `_parent_table_name1_parent_column1`',
+        '`parent_table_name1`.`parent_column2` AS `_parent_table_name1_parent_column2`',
+        '`parent_table_name1`.`parent_column3` AS `_parent_table_name1_parent_column3`',
+        '`parent_table_name2`.`parent_column1` AS `_parent_table_name2_parent_column1`',
+        '`parent_table_name2`.`parent_column2` AS `_parent_table_name2_parent_column2`',
+        '`parent_table_name2`.`parent_column3` AS `_parent_table_name2_parent_column3`',
+        '`parent_table_name3`.`parent_column1` AS `_parent_table_name3_parent_column1`',
+        '`parent_table_name3`.`parent_column2` AS `_parent_table_name3_parent_column2`',
+        '`parent_table_name3`.`parent_column3` AS `_parent_table_name3_parent_column3`'
       ]);
     });
 
-    test('addingPreloadAddsLeftJoin', () {
+    test('adding preload adds left join', () {
       final Preload preload = Preload();
       preload.add(
         'parent_table_name',
@@ -242,11 +282,12 @@ void main() {
 
       expect(
           preload.join.statement,
-          'LEFT JOIN parent_table_name '
-          'ON parent_table_name.parent_fkey = child_table_name.child_pkey');
+          'LEFT JOIN `parent_table_name` '
+          'ON `parent_table_name`.`parent_fkey` = '
+          '`child_table_name`.`child_pkey`');
     });
 
-    test('addingMultiplePreloadsAddsMultipleLeftJoins', () {
+    test('adding multiple preloads adds multiple left joins', () {
       final Preload preload = Preload();
       preload.add(
         'parent_table_name1',
@@ -271,17 +312,40 @@ void main() {
       );
 
       expect(
-          preload.join.statement,
-          'LEFT JOIN parent_table_name1 '
-          'ON parent_table_name1.parent_fkey = child_table_name1.child_pkey '
-          'LEFT JOIN parent_table_name2 '
-          'ON parent_table_name2.parent_fkey = child_table_name2.child_pkey '
-          'LEFT JOIN parent_table_name3 '
-          'ON parent_table_name3.parent_fkey = child_table_name3.child_pkey');
+        preload.join.statement,
+        'LEFT JOIN `parent_table_name1` '
+        'ON `parent_table_name1`.`parent_fkey` = '
+        '`child_table_name1`.`child_pkey` '
+        'LEFT JOIN `parent_table_name2` '
+        'ON `parent_table_name2`.`parent_fkey` = '
+        '`child_table_name2`.`child_pkey` '
+        'LEFT JOIN `parent_table_name3` '
+        'ON `parent_table_name3`.`parent_fkey` = '
+        '`child_table_name3`.`child_pkey`',
+      );
+    });
+
+    test('escaping names can be disabled in added left join', () {
+      final Preload preload = Preload();
+      preload.add(
+        'parent_table_name',
+        'parent_fkey',
+        'child_table_name',
+        'child_pkey',
+        _parentColumns,
+        escapeNames: false,
+      );
+
+      expect(
+        preload.join.statement,
+        'LEFT JOIN parent_table_name '
+        'ON parent_table_name.parent_fkey = '
+        'child_table_name.child_pkey',
+      );
     });
   });
 
-  group('extractPreloadedMap', () {
+  group('extract preloaded map', () {
     test('extracts preloaded value', () {
       final Map<String, dynamic> map = <String, dynamic>{
         'col': 1,
@@ -413,6 +477,42 @@ void main() {
           Preload.extractPreLoadedMap('t', map);
 
       expect(extracted, <String, dynamic>{'_col1': 11, 'col4': 14});
+    });
+
+    test('extracts preloaded value when names are escaped', () {
+      final Map<String, dynamic> map = <String, dynamic>{
+        '`col`': 1,
+        '`_table_col`': 2
+      };
+
+      final Map<String, dynamic>? extracted =
+          Preload.extractPreLoadedMap('table', map);
+
+      expect(extracted, <String, dynamic>{'col': 2});
+    });
+
+    test('extracts preloaded value when table name is escaped', () {
+      final Map<String, dynamic> map = <String, dynamic>{
+        'col': 1,
+        '_table_col': 2
+      };
+
+      final Map<String, dynamic>? extracted =
+          Preload.extractPreLoadedMap('`table`', map);
+
+      expect(extracted, <String, dynamic>{'col': 2});
+    });
+
+    test('extracts preloaded value when table and names are escaped', () {
+      final Map<String, dynamic> map = <String, dynamic>{
+        '`col`': 1,
+        '`_table_col`': 2
+      };
+
+      final Map<String, dynamic>? extracted =
+          Preload.extractPreLoadedMap('`table`', map);
+
+      expect(extracted, <String, dynamic>{'col': 2});
     });
   });
 }
