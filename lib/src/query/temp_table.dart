@@ -27,7 +27,11 @@ class TempTable {
     );
   }
 
-  void insertValues(Batch batch, List<dynamic> values, {bool escapeNames = true}) {
+  void insertValues(
+    Batch batch,
+    List<dynamic> values, {
+    bool escapeNames = true,
+  }) {
     for (final dynamic value in values) {
       batch.rawInsert(
         escapeNames

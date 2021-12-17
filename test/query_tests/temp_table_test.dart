@@ -73,7 +73,7 @@ void main() {
 
     test('insert string values', () {
       const String insertStatement =
-          'INSERT INTO temp._temp_table_test_test VALUES (?)';
+          'INSERT INTO temp.`_temp_table_test_test` VALUES (?)';
       final MockBatch batch = MockBatch();
       final TempTable tempTable = TempTable('test_test');
 
