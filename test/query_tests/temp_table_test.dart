@@ -31,7 +31,7 @@ void main() {
   });
 
   group('insertValues', () {
-    test('test', () {
+    test('insert integer values', () {
       const String insertStatement =
           'INSERT INTO temp._temp_table_test_test VALUES (?)';
       final MockBatch batch = MockBatch();
@@ -42,6 +42,19 @@ void main() {
       expect(batch.statements,
           <String>[insertStatement, insertStatement, insertStatement]);
       expect(batch.arguments, <int>[1, 2, 3]);
+    });
+
+    test('insert string values', () {
+      const String insertStatement =
+          'INSERT INTO temp._temp_table_test_test VALUES (?)';
+      final MockBatch batch = MockBatch();
+      final TempTable tempTable = TempTable('test_test');
+
+      tempTable.insertValues(batch, <String>['1', '2', '3']);
+
+      expect(batch.statements,
+          <String>[insertStatement, insertStatement, insertStatement]);
+      expect(batch.arguments, <String>['1', '2', '3']);
     });
   });
 }

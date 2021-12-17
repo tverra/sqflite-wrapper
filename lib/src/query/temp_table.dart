@@ -16,11 +16,11 @@ class TempTable {
     );
   }
 
-  void insertValues(Batch batch, List<int> values) {
-    for (final int value in values) {
+  void insertValues(Batch batch, List<dynamic> values) {
+    for (final dynamic value in values) {
       batch.rawInsert(
         'INSERT INTO temp._temp_table_$identifier VALUES (?)',
-        <int>[value],
+        <dynamic>[value],
       );
     }
   }
