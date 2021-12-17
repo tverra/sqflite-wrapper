@@ -50,7 +50,7 @@ void main() {
       );
 
       expect(join.statement,
-          'LEFT JOIN table_name ON table_name.f_key = ref_table_name.ref_key');
+          'LEFT JOIN `table_name` ON `table_name`.`f_key` = `ref_table_name`.`ref_key`');
     });
 
     test('tableName is asserted not null', () {
@@ -92,6 +92,19 @@ void main() {
         );
       }, throwsA(isA<AssertionError>()));
     });
+
+    test('escaping names can be disabled', () {
+      final Join join = Join(
+        tableName: 'table_name',
+        fKey: 'f_key',
+        refTableName: 'ref_table_name',
+        refKey: 'ref_key',
+        escapeNames: false,
+      );
+
+      expect(join.statement,
+          'LEFT JOIN table_name ON table_name.f_key = ref_table_name.ref_key');
+    });
   });
 
   group('addInnerJoin', () {
@@ -99,8 +112,10 @@ void main() {
       final Join join = Join();
       join.addInnerJoin('table_name', 'fkey', 'ref_table_name', 'ref_key');
 
-      expect(join.statement,
-          'INNER JOIN table_name ON table_name.fkey = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'INNER JOIN `table_name` '
+          'ON `table_name`.`fkey` = `ref_table_name`.`ref_key`');
     });
 
     test('increments numberOfJoins', () {
@@ -126,8 +141,10 @@ void main() {
         type: JoinType.innerJoin,
       );
 
-      expect(join.statement,
-          'INNER JOIN table_name ON table_name.f_key = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'INNER JOIN `table_name` '
+          'ON `table_name`.`f_key` = `ref_table_name`.`ref_key`');
     });
 
     test('multiple inner joins can be added', () {
@@ -138,12 +155,28 @@ void main() {
 
       expect(
           join.statement,
-          'INNER JOIN table_name1 ON '
-          'table_name1.fkey4 = ref_table_name7.ref_key10 '
-          'INNER JOIN table_name2 ON '
-          'table_name2.fkey5 = ref_table_name8.ref_key11 '
-          'INNER JOIN table_name3 ON '
-          'table_name3.fkey6 = ref_table_name9.ref_key12');
+          'INNER JOIN `table_name1` ON '
+          '`table_name1`.`fkey4` = `ref_table_name7`.`ref_key10` '
+          'INNER JOIN `table_name2` ON '
+          '`table_name2`.`fkey5` = `ref_table_name8`.`ref_key11` '
+          'INNER JOIN `table_name3` ON '
+          '`table_name3`.`fkey6` = `ref_table_name9`.`ref_key12`');
+    });
+
+    test('escaping names can be disabled', () {
+      final Join join = Join();
+      join.addInnerJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        escapeNames: false,
+      );
+
+      expect(
+          join.statement,
+          'INNER JOIN table_name '
+          'ON table_name.fkey = ref_table_name.ref_key');
     });
   });
 
@@ -152,8 +185,10 @@ void main() {
       final Join join = Join();
       join.addLeftJoin('table_name', 'fkey', 'ref_table_name', 'ref_key');
 
-      expect(join.statement,
-          'LEFT JOIN table_name ON table_name.fkey = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'LEFT JOIN `table_name` '
+          'ON `table_name`.`fkey` = `ref_table_name`.`ref_key`');
     });
 
     test('increments numberOfJoins', () {
@@ -179,8 +214,10 @@ void main() {
         type: JoinType.leftJoin,
       );
 
-      expect(join.statement,
-          'LEFT JOIN table_name ON table_name.f_key = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'LEFT JOIN `table_name` '
+          'ON `table_name`.`f_key` = `ref_table_name`.`ref_key`');
     });
 
     test('multiple left joins can be added', () {
@@ -191,12 +228,29 @@ void main() {
 
       expect(
           join.statement,
-          'LEFT JOIN table_name1 ON '
-          'table_name1.fkey4 = ref_table_name7.ref_key10 '
-          'LEFT JOIN table_name2 ON '
-          'table_name2.fkey5 = ref_table_name8.ref_key11 '
-          'LEFT JOIN table_name3 ON '
-          'table_name3.fkey6 = ref_table_name9.ref_key12');
+          'LEFT JOIN `table_name1` ON '
+          '`table_name1`.`fkey4` = `ref_table_name7`.`ref_key10` '
+          'LEFT JOIN `table_name2` ON '
+          '`table_name2`.`fkey5` = `ref_table_name8`.`ref_key11` '
+          'LEFT JOIN `table_name3` ON '
+          '`table_name3`.`fkey6` = `ref_table_name9`.`ref_key12`');
+    });
+
+    test('escaping names can be disabled', () {
+      final Join join = Join();
+      join.addLeftJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        escapeNames: false,
+      );
+
+      expect(
+        join.statement,
+        'LEFT JOIN table_name '
+        'ON table_name.fkey = ref_table_name.ref_key',
+      );
     });
   });
 
@@ -205,8 +259,10 @@ void main() {
       final Join join = Join();
       join.addCrossJoin('table_name', 'fkey', 'ref_table_name', 'ref_key');
 
-      expect(join.statement,
-          'CROSS JOIN table_name ON table_name.fkey = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'CROSS JOIN `table_name` '
+          'ON `table_name`.`fkey` = `ref_table_name`.`ref_key`');
     });
 
     test('increments numberOfJoins', () {
@@ -232,8 +288,10 @@ void main() {
         type: JoinType.crossJoin,
       );
 
-      expect(join.statement,
-          'CROSS JOIN table_name ON table_name.f_key = ref_table_name.ref_key');
+      expect(
+          join.statement,
+          'CROSS JOIN `table_name` '
+          'ON `table_name`.`f_key` = `ref_table_name`.`ref_key`');
     });
 
     test('multiple cross joins can be added', () {
@@ -244,12 +302,29 @@ void main() {
 
       expect(
           join.statement,
-          'CROSS JOIN table_name1 ON '
-          'table_name1.fkey4 = ref_table_name7.ref_key10 '
-          'CROSS JOIN table_name2 ON '
-          'table_name2.fkey5 = ref_table_name8.ref_key11 '
-          'CROSS JOIN table_name3 ON '
-          'table_name3.fkey6 = ref_table_name9.ref_key12');
+          'CROSS JOIN `table_name1` ON '
+          '`table_name1`.`fkey4` = `ref_table_name7`.`ref_key10` '
+          'CROSS JOIN `table_name2` ON '
+          '`table_name2`.`fkey5` = `ref_table_name8`.`ref_key11` '
+          'CROSS JOIN `table_name3` ON '
+          '`table_name3`.`fkey6` = `ref_table_name9`.`ref_key12`');
+    });
+
+    test('escaping names can be disabled', () {
+      final Join join = Join();
+      join.addCrossJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        escapeNames: false,
+      );
+
+      expect(
+        join.statement,
+        'CROSS JOIN table_name '
+        'ON table_name.fkey = ref_table_name.ref_key',
+      );
     });
   });
 
@@ -262,12 +337,12 @@ void main() {
 
       expect(
           join.statement,
-          'CROSS JOIN table_name1 ON '
-          'table_name1.fkey4 = ref_table_name7.ref_key10 '
-          'LEFT JOIN table_name2 ON '
-          'table_name2.fkey5 = ref_table_name8.ref_key11 '
-          'INNER JOIN table_name3 ON '
-          'table_name3.fkey6 = ref_table_name9.ref_key12');
+          'CROSS JOIN `table_name1` ON '
+          '`table_name1`.`fkey4` = `ref_table_name7`.`ref_key10` '
+          'LEFT JOIN `table_name2` ON '
+          '`table_name2`.`fkey5` = `ref_table_name8`.`ref_key11` '
+          'INNER JOIN `table_name3` ON '
+          '`table_name3`.`fkey6` = `ref_table_name9`.`ref_key12`');
     });
   });
 }

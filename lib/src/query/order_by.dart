@@ -5,16 +5,24 @@ class OrderBy {
   String _sql = '';
   int _numberOfOrderings = 0;
 
-  OrderBy(
-      {String? table,
-      String? col,
-      OrderType? orderType,
-      bool invertNullOrder = false}) {
+  OrderBy({
+    String? table,
+    String? col,
+    OrderType? orderType,
+    bool invertNullOrder = false,
+    bool escapeNames = true,
+  }) {
     if (table != null || col != null || orderType != null) {
       assert(col != null);
       assert(orderType != null);
 
-      orderBy(col!, orderType!, table: table, invertNullOrder: invertNullOrder);
+      orderBy(
+        col!,
+        orderType!,
+        table: table,
+        invertNullOrder: invertNullOrder,
+        escapeNames: escapeNames,
+      );
     }
   }
 
@@ -30,14 +38,30 @@ class OrderBy {
     return numberOfOrderings > 0;
   }
 
-  void orderBy(String col, OrderType orderType,
-      {String? table, bool invertNullOrder = false}) {
+  void orderBy(
+    String col,
+    OrderType orderType, {
+    bool invertNullOrder = false,
+    String? table,
+    bool escapeNames = true,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(sql);
     if (hasClause()) buffer.write(', ');
-    if (table != null) buffer.write('$table.');
 
-    buffer.write(col);
+    if (table != null) {
+      if (escapeNames) {
+        buffer.write('`$table`.');
+      } else {
+        buffer.write('$table.');
+      }
+    }
+
+    if (escapeNames) {
+      buffer.write('`$col`');
+    } else {
+      buffer.write(col);
+    }
     buffer.write(' ${_orderTypes[orderType.index]}');
 
     if (invertNullOrder) {

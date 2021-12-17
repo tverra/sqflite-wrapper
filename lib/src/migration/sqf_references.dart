@@ -14,18 +14,18 @@ class SqfReferences {
   });
 
   String sql({required String columnName}) {
-    final StringBuffer sql = StringBuffer();
+    final StringBuffer buffer = StringBuffer();
 
-    sql.write('REFERENCES $foreignTableName($foreignColumnName)');
+    buffer.write('REFERENCES `$foreignTableName`(`$foreignColumnName`)');
 
     if (onUpdate != null) {
-      sql.write(' ON UPDATE ${sqfActions[onUpdate!.index]}');
+      buffer.write(' ON UPDATE ${sqfActions[onUpdate!.index]}');
     }
     if (onDelete != null) {
-      sql.write(' ON DELETE ${sqfActions[onDelete!.index]}');
+      buffer.write(' ON DELETE ${sqfActions[onDelete!.index]}');
     }
 
-    return sql.toString();
+    return buffer.toString();
   }
 }
 

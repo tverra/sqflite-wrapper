@@ -10,7 +10,7 @@ void main() {
       );
 
       const String expected =
-          'CREATE INDEX idx_table_name_col1 ON table_name (col1);';
+          'CREATE INDEX `idx_table_name_col1` ON `table_name` (`col1`);';
 
       expect(index.sql, expected);
     });
@@ -28,7 +28,8 @@ void main() {
         name: 'index_name',
       );
 
-      const String expected = 'CREATE INDEX index_name ON table_name (col1);';
+      const String expected =
+          'CREATE INDEX `index_name` ON `table_name` (`col1`);';
 
       expect(index.sql, expected);
     });
@@ -41,7 +42,7 @@ void main() {
       );
 
       const String expected =
-          'CREATE UNIQUE INDEX idx_table_name_col1 ON table_name (col1);';
+          'CREATE UNIQUE INDEX `idx_table_name_col1` ON `table_name` (`col1`);';
 
       expect(index.sql, expected);
     });
@@ -52,8 +53,8 @@ void main() {
         columnNames: <String>['col1', 'col2', 'col3'],
       );
 
-      const String expected = 'CREATE INDEX idx_table_name_col1_col2_col3 '
-          'ON table_name (col1, col2, col3);';
+      const String expected = 'CREATE INDEX `idx_table_name_col1_col2_col3` '
+          'ON `table_name` (`col1`, `col2`, `col3`);';
 
       expect(index.sql, expected);
     });
@@ -66,7 +67,7 @@ void main() {
         columnNames: <String>['col1'],
       );
 
-      const String expected = 'DROP INDEX idx_table_name_col1;';
+      const String expected = 'DROP INDEX `idx_table_name_col1`;';
 
       expect(index.drop, expected);
     });
@@ -80,24 +81,34 @@ void main() {
         unique: true,
       );
 
-      expect(index.sql,
-          'CREATE UNIQUE INDEX idx_table_name_col ON table_name (col);');
+      expect(
+          index.sql,
+          'CREATE UNIQUE INDEX `idx_table_name_col` '
+          'ON `table_name` (`col`);');
 
       index = index.copyWith(tableName: 'new_table_name');
-      expect(index.sql,
-          'CREATE UNIQUE INDEX idx_table_name_col ON new_table_name (col);');
+      expect(
+          index.sql,
+          'CREATE UNIQUE INDEX `idx_table_name_col` '
+          'ON `new_table_name` (`col`);');
 
       index = index.copyWith(columnNames: <String>['new_col']);
-      expect(index.sql,
-          'CREATE UNIQUE INDEX idx_table_name_col ON new_table_name (new_col);');
+      expect(
+          index.sql,
+          'CREATE UNIQUE INDEX `idx_table_name_col` '
+          'ON `new_table_name` (`new_col`);');
 
       index = index.copyWith(unique: false);
-      expect(index.sql,
-          'CREATE INDEX idx_table_name_col ON new_table_name (new_col);');
+      expect(
+          index.sql,
+          'CREATE INDEX `idx_table_name_col` '
+          'ON `new_table_name` (`new_col`);');
 
       index = index.copyWith(name: 'new_index_name');
-      expect(index.sql,
-          'CREATE INDEX new_index_name ON new_table_name (new_col);');
+      expect(
+          index.sql,
+          'CREATE INDEX `new_index_name` '
+          'ON `new_table_name` (`new_col`);');
     });
   });
 }

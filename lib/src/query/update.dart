@@ -13,20 +13,40 @@ class Update {
   late final bool forUpsert;
   late final Map<String, dynamic> values;
 
-  Update(String table, Map<String, dynamic> values,
-      {Where? where, ConflictAlgorithm? conflictAlgorithm}) {
-    _buildQuery(values,
-        table: table, where: where, conflictAlgorithm: conflictAlgorithm);
+  Update(
+    String table,
+    Map<String, dynamic> values, {
+    Where? where,
+    ConflictAlgorithm? conflictAlgorithm,
+    bool escapeNames = true,
+  }) {
+    _buildQuery(
+      values,
+      table: table,
+      where: where,
+      conflictAlgorithm: conflictAlgorithm,
+      escapeNames: escapeNames,
+    );
   }
 
-  Update.forUpsert(Map<String, dynamic> values,
-      {Where? where, ConflictAlgorithm? conflictAlgorithm}) {
-    _buildQuery(values,
-        where: where, conflictAlgorithm: conflictAlgorithm, forUpsert: true);
+  Update.forUpsert(
+    Map<String, dynamic> values, {
+    Where? where,
+    ConflictAlgorithm? conflictAlgorithm,
+    bool escapeNames = true,
+  }) {
+    _buildQuery(
+      values,
+      where: where,
+      conflictAlgorithm: conflictAlgorithm,
+      forUpsert: true,
+      escapeNames: escapeNames,
+    );
   }
 
   void _buildQuery(
     Map<String, dynamic> values, {
+    required bool escapeNames,
     String? table,
     Where? where,
     ConflictAlgorithm? conflictAlgorithm,
@@ -49,7 +69,7 @@ class Update {
       if (table == null) {
         update.write(' NULL');
       } else {
-        update.write(' $table');
+        update.write(escapeNames ? ' `$table`' : ' $table');
       }
     }
     update.write(' SET ');
@@ -59,7 +79,7 @@ class Update {
 
     for (final String colName in values.keys) {
       update.write((i++ > 0) ? ', ' : '');
-      update.write(colName);
+      update.write(escapeNames ? '`$colName`' : colName);
 
       final dynamic value = values[colName];
 

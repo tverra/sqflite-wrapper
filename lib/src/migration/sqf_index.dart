@@ -22,26 +22,26 @@ class SqfIndex {
   }
 
   String get sql {
-    final StringBuffer sql = StringBuffer('CREATE ');
+    final StringBuffer buffer = StringBuffer('CREATE ');
 
-    if (unique) sql.write('UNIQUE ');
+    if (unique) buffer.write('UNIQUE ');
 
-    sql.write('INDEX $name ON $tableName (');
+    buffer.write('INDEX `$name` ON `$tableName` (');
 
     for (int i = 0; i < _columnNames.length; i++) {
-      sql.write(_columnNames[i]);
+      buffer.write('`${_columnNames[i]}`');
 
       if (i < _columnNames.length - 1) {
-        sql.write(', ');
+        buffer.write(', ');
       }
     }
-    sql.write(');');
+    buffer.write(');');
 
-    return sql.toString();
+    return buffer.toString();
   }
 
   String get drop {
-    return 'DROP INDEX $name;';
+    return 'DROP INDEX `$name`;';
   }
 
   SqfIndex copyWith({

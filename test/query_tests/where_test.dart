@@ -30,20 +30,20 @@ void main() {
 
     test('addEquals is default in constructor if type is null', () {
       final Where where = Where(col: 'col', val: 'val', type: null);
-      expect(where.statement, 'col = ?');
+      expect(where.statement, '`col` = ?');
       expect(where.args, <dynamic>['val']);
     });
 
     test('addIs is default in constructor if opts is null and value is null',
         () {
       final Where where = Where(col: 'col', val: null);
-      expect(where.statement, 'col IS NULL');
+      expect(where.statement, '`col` IS NULL');
       expect(where.args, <dynamic>[]);
     });
 
     test('table name can be added in constructor', () {
       final Where where = Where(table: 'table_name', col: 'col', val: 'val');
-      expect(where.statement, 'table_name.col = ?');
+      expect(where.statement, '`table_name`.`col` = ?');
       expect(where.args, <dynamic>['val']);
     });
 
@@ -52,20 +52,31 @@ void main() {
         Where(col: null, val: 1);
       }, throwsA(isA<AssertionError>()));
     });
+
+    test('escaping names can be disabled', () {
+      final Where where = Where(
+        table: 'table_name',
+        col: 'col',
+        val: 'val',
+        escapeNames: false,
+      );
+      expect(where.statement, 'table_name.col = ?');
+      expect(where.args, <dynamic>['val']);
+    });
   });
 
   group('addEquals', () {
     test('adds "equals"-condition', () {
       final Where where = Where();
       where.addEquals('column', 'value');
-      expect(where.statement, 'column = ?');
+      expect(where.statement, '`column` = ?');
       expect(where.args, <dynamic>['value']);
     });
 
     test('adds "not equals"-condition when not is true', () {
       final Where where = Where();
       where.addEquals('column', 'value', not: true);
-      expect(where.statement, 'column != ?');
+      expect(where.statement, '`column` != ?');
       expect(where.args, <dynamic>['value']);
     });
 
@@ -73,7 +84,7 @@ void main() {
       final Where where = Where();
       where.addEquals('column', 'value1');
       where.addEquals('column', 'value2', combinator: WhereCombinator.or);
-      expect(where.statement, 'column = ? OR column = ?');
+      expect(where.statement, '`column` = ? OR `column` = ?');
       expect(where.args, <dynamic>['value1', 'value2']);
     });
 
@@ -84,14 +95,14 @@ void main() {
         where.addEquals('col$i', i);
       }
 
-      expect(
-          where.statement, 'col1 = ? AND col2 = ? AND col3 = ? AND col4 = ?');
+      expect(where.statement,
+          '`col1` = ? AND `col2` = ? AND `col3` = ? AND `col4` = ?');
       expect(where.args, <dynamic>[1, 2, 3, 4]);
     });
 
     test('equals condition can be added in constructor', () {
       final Where where = Where(col: 'column', val: 'value');
-      expect(where.statement, 'column = ?');
+      expect(where.statement, '`column` = ?');
       expect(where.args, <dynamic>['value']);
     });
 
@@ -99,7 +110,7 @@ void main() {
       final Where where = Where();
       where.addEquals('column', null);
 
-      expect(where.statement, 'column = NULL');
+      expect(where.statement, '`column` = NULL');
       expect(where.args, <dynamic>[]);
     });
 
@@ -115,6 +126,13 @@ void main() {
     test('table name can be added in constructor', () {
       final Where where = Where();
       where.addEquals('col', 'val', table: 'table_name');
+      expect(where.statement, '`table_name`.`col` = ?');
+      expect(where.args, <dynamic>['val']);
+    });
+
+    test('escaping names can be disabled', () {
+      final Where where = Where();
+      where.addEquals('col', 'val', table: 'table_name', escapeNames: false);
       expect(where.statement, 'table_name.col = ?');
       expect(where.args, <dynamic>['val']);
     });
@@ -124,14 +142,14 @@ void main() {
     test('adds "IN"-condition', () {
       final Where where = Where();
       where.addIn('column', <dynamic>['value']);
-      expect(where.statement, 'column IN (?)');
+      expect(where.statement, '`column` IN (?)');
       expect(where.args, <dynamic>['value']);
     });
 
     test('adds "NOT IN"-condition if not is true', () {
       final Where where = Where();
       where.addIn('column', <dynamic>['value'], not: true);
-      expect(where.statement, 'column NOT IN (?)');
+      expect(where.statement, '`column` NOT IN (?)');
       expect(where.args, <dynamic>['value']);
     });
 
@@ -139,7 +157,7 @@ void main() {
       final Where where = Where();
       where.addIn('column', <String>['value1']);
       where.addIn('column', <String>['value2'], combinator: WhereCombinator.or);
-      expect(where.statement, 'column IN (?) OR column IN (?)');
+      expect(where.statement, '`column` IN (?) OR `column` IN (?)');
       expect(where.args, <dynamic>['value1', 'value2']);
     });
 
@@ -147,7 +165,7 @@ void main() {
       final Where where = Where();
       where.addIn('column', <dynamic>[null]);
 
-      expect(where.statement, 'column IN (NULL)');
+      expect(where.statement, '`column` IN (NULL)');
       expect(where.args, <dynamic>[]);
     });
 
@@ -158,8 +176,10 @@ void main() {
         where.addIn('col$i', <dynamic>[i]);
       }
 
-      expect(where.statement,
-          'col1 IN (?) AND col2 IN (?) AND col3 IN (?) AND col4 IN (?)');
+      expect(
+          where.statement,
+          '`col1` IN (?) AND `col2` IN (?) '
+          'AND `col3` IN (?) AND `col4` IN (?)');
       expect(where.args, <dynamic>[1, 2, 3, 4]);
     });
 
@@ -167,7 +187,7 @@ void main() {
       final Where where = Where();
       where.addIn('column', <dynamic>[1, 2, 3, 4, 5]);
 
-      expect(where.statement, 'column IN (?, ?, ?, ?, ?)');
+      expect(where.statement, '`column` IN (?, ?, ?, ?, ?)');
       expect(where.args, <dynamic>[1, 2, 3, 4, 5]);
     });
 
@@ -183,13 +203,25 @@ void main() {
     test('"IN"-condition can be added in constructor', () {
       final Where where =
           Where(col: 'column', val: <dynamic>['value'], type: WhereType.sqfIn);
-      expect(where.statement, 'column IN (?)');
+      expect(where.statement, '`column` IN (?)');
       expect(where.args, <dynamic>['value']);
     });
 
     test('table name can be added in constructor', () {
       final Where where = Where();
       where.addIn('col', <dynamic>['val'], table: 'table_name');
+      expect(where.statement, '`table_name`.`col` IN (?)');
+      expect(where.args, <dynamic>['val']);
+    });
+
+    test('escaping names can be disabled', () {
+      final Where where = Where();
+      where.addIn(
+        'col',
+        <dynamic>['val'],
+        table: 'table_name',
+        escapeNames: false,
+      );
       expect(where.statement, 'table_name.col IN (?)');
       expect(where.args, <dynamic>['val']);
     });
@@ -201,7 +233,7 @@ void main() {
       final Query query = Query('table', where: Where(col: 'value', val: 1));
       where.addSubQuery('column', query);
       expect(where.statement,
-          'column IN (SELECT table.* FROM table WHERE value = ?)');
+          '`column` IN (SELECT `table`.* FROM `table` WHERE `value` = ?)');
       expect(where.args, <dynamic>[1]);
     });
 
@@ -210,7 +242,7 @@ void main() {
       final Query query = Query('table', where: Where(col: 'value', val: '1'));
       where.addSubQuery('column', query, not: true);
       expect(where.statement,
-          'column NOT IN (SELECT table.* FROM table WHERE value = ?)');
+          '`column` NOT IN (SELECT `table`.* FROM `table` WHERE `value` = ?)');
       expect(where.args, <dynamic>['1']);
     });
 
@@ -223,8 +255,8 @@ void main() {
           combinator: WhereCombinator.or);
       expect(
           where.statement,
-          'column1 IN (SELECT table.* FROM table WHERE value = ?) OR '
-          'column2 IN (SELECT table.* FROM table WHERE value = ?)');
+          '`column1` IN (SELECT `table`.* FROM `table` WHERE `value` = ?) OR '
+          '`column2` IN (SELECT `table`.* FROM `table` WHERE `value` = ?)');
       expect(where.args, <dynamic>[1, 2]);
     });
 
@@ -238,10 +270,10 @@ void main() {
 
       expect(
           where.statement,
-          'col1 IN (SELECT table1.* FROM table1 WHERE id = ?) AND '
-          'col2 IN (SELECT table2.* FROM table2 WHERE id = ?) AND '
-          'col3 IN (SELECT table3.* FROM table3 WHERE id = ?) AND '
-          'col4 IN (SELECT table4.* FROM table4 WHERE id = ?)');
+          '`col1` IN (SELECT `table1`.* FROM `table1` WHERE `id` = ?) AND '
+          '`col2` IN (SELECT `table2`.* FROM `table2` WHERE `id` = ?) AND '
+          '`col3` IN (SELECT `table3`.* FROM `table3` WHERE `id` = ?) AND '
+          '`col4` IN (SELECT `table4`.* FROM `table4` WHERE `id` = ?)');
       expect(where.args, <dynamic>[1, 2, 3, 4]);
     });
 
@@ -259,8 +291,8 @@ void main() {
 
       expect(
           where.statement,
-          'column IN (SELECT table.* FROM table '
-          'WHERE a = ? AND b = ? AND c = ? AND d = ? AND e = ?)');
+          '`column` IN (SELECT `table`.* FROM `table` '
+          'WHERE `a` = ? AND `b` = ? AND `c` = ? AND `d` = ? AND `e` = ?)');
       expect(where.args, <dynamic>[1, 2, 3, 4, 5]);
     });
 
@@ -281,8 +313,31 @@ void main() {
           where: Where(col: 'col', val: 'val', table: 'table_name'));
       where.addSubQuery('column', query);
 
-      expect(where.statement,
-          'column IN (SELECT table.* FROM table WHERE table_name.col = ?)');
+      expect(
+          where.statement,
+          '`column` IN (SELECT `table`.* FROM `table` '
+          'WHERE `table_name`.`col` = ?)');
+      expect(where.args, <dynamic>['val']);
+    });
+
+    test('escaping names can be disabled', () {
+      final Where where = Where();
+      final Query query = Query(
+        'table',
+        escapeNames: false,
+        where: Where(
+          col: 'col',
+          val: 'val',
+          table: 'table_name',
+          escapeNames: false,
+        ),
+      );
+      where.addSubQuery('column', query, escapeNames: false);
+
+      expect(
+          where.statement,
+          'column IN (SELECT table.* FROM table '
+          'WHERE table_name.col = ?)');
       expect(where.args, <dynamic>['val']);
     });
   });
@@ -291,14 +346,14 @@ void main() {
     test('adds "IS"-condition', () {
       final Where where = Where();
       where.addIs('column', 'value');
-      expect(where.statement, 'column IS ?');
+      expect(where.statement, '`column` IS ?');
       expect(where.args, <dynamic>['value']);
     });
 
     test('adds "NOT IS"-condition if not is true', () {
       final Where where = Where();
       where.addIs('column', 'value', not: true);
-      expect(where.statement, 'column IS NOT ?');
+      expect(where.statement, '`column` IS NOT ?');
       expect(where.args, <dynamic>['value']);
     });
 
@@ -306,7 +361,7 @@ void main() {
       final Where where = Where();
       where.addIs('column', 'value1');
       where.addIs('column', 'value2', combinator: WhereCombinator.or);
-      expect(where.statement, 'column IS ? OR column IS ?');
+      expect(where.statement, '`column` IS ? OR `column` IS ?');
       expect(where.args, <dynamic>['value1', 'value2']);
     });
 
@@ -318,7 +373,7 @@ void main() {
       }
 
       expect(where.statement,
-          'col1 IS ? AND col2 IS ? AND col3 IS ? AND col4 IS ?');
+          '`col1` IS ? AND `col2` IS ? AND `col3` IS ? AND `col4` IS ?');
       expect(where.args, <dynamic>[1, 2, 3, 4]);
     });
 
@@ -334,20 +389,27 @@ void main() {
     test('"IS"-condition can be added in constructor', () {
       final Where where =
           Where(col: 'column', val: 'value', type: WhereType.sqfIs);
-      expect(where.statement, 'column IS ?');
+      expect(where.statement, '`column` IS ?');
       expect(where.args, <dynamic>['value']);
     });
 
     test('value in constructor can be null', () {
       final Where where = Where(col: 'column', val: null);
 
-      expect(where.statement, 'column IS NULL');
+      expect(where.statement, '`column` IS NULL');
       expect(where.args, <dynamic>[]);
     });
 
     test('table name can be added in constructor', () {
       final Where where = Where();
       where.addIs('col', 'val', table: 'table_name');
+      expect(where.statement, '`table_name`.`col` IS ?');
+      expect(where.args, <dynamic>['val']);
+    });
+
+    test('escaping names can be disabled', () {
+      final Where where = Where();
+      where.addIs('col', 'val', table: 'table_name', escapeNames: false);
       expect(where.statement, 'table_name.col IS ?');
       expect(where.args, <dynamic>['val']);
     });
@@ -359,7 +421,7 @@ void main() {
       final Where secondWhere = Where(table: 'table2', col: 'col', val: 2);
       firstWhere.combine(secondWhere);
 
-      expect(firstWhere.statement, 'table1.col = ? AND table2.col = ?');
+      expect(firstWhere.statement, '`table1`.`col` = ? AND `table2`.`col` = ?');
       expect(firstWhere.args, <dynamic>[1, 2]);
     });
 
@@ -371,7 +433,7 @@ void main() {
       firstWhere.combine(thirdWhere);
 
       expect(firstWhere.statement,
-          'table1.col = ? AND table2.col = ? AND table3.col = ?');
+          '`table1`.`col` = ? AND `table2`.`col` = ? AND `table3`.`col` = ?');
       expect(firstWhere.args, <dynamic>[1, 2, 3]);
     });
 
@@ -380,7 +442,7 @@ void main() {
       final Where secondWhere = Where();
       firstWhere.combine(secondWhere);
 
-      expect(firstWhere.statement, 'table1.col = ?');
+      expect(firstWhere.statement, '`table1`.`col` = ?');
       expect(firstWhere.args, <dynamic>[1]);
     });
 
@@ -389,7 +451,7 @@ void main() {
       final Where secondWhere = Where(table: 'table2', col: 'col', val: 2);
       firstWhere.combine(secondWhere, combinator: WhereCombinator.and);
 
-      expect(firstWhere.statement, 'table1.col = ? AND table2.col = ?');
+      expect(firstWhere.statement, '`table1`.`col` = ? AND `table2`.`col` = ?');
       expect(firstWhere.args, <dynamic>[1, 2]);
     });
 
@@ -398,7 +460,7 @@ void main() {
       final Where secondWhere = Where(table: 'table2', col: 'col', val: 2);
       firstWhere.combine(secondWhere, combinator: WhereCombinator.or);
 
-      expect(firstWhere.statement, 'table1.col = ? OR table2.col = ?');
+      expect(firstWhere.statement, '`table1`.`col` = ? OR `table2`.`col` = ?');
       expect(firstWhere.args, <dynamic>[1, 2]);
     });
 
@@ -407,7 +469,7 @@ void main() {
       final Where secondWhere = Where(table: 'table2', col: 'col', val: 2);
       firstWhere.combine(secondWhere, combinator: WhereCombinator.and);
 
-      expect(firstWhere.statement, 'table2.col = ?');
+      expect(firstWhere.statement, '`table2`.`col` = ?');
       expect(firstWhere.args, <dynamic>[2]);
     });
 
@@ -423,8 +485,8 @@ void main() {
       firstWhere.combine(secondWhere, combinator: WhereCombinator.and);
       expect(
           firstWhere.statement,
-          'table.col1 IN (?, ?, ?) AND table.col2 IS NOT ? '
-          'AND table.col3 = ? OR table.col4 > ?');
+          '`table`.`col1` IN (?, ?, ?) AND `table`.`col2` IS NOT ? '
+          'AND `table`.`col3` = ? OR `table`.`col4` > ?');
       expect(firstWhere.args, <dynamic>[1, 2, 3, 4, 5, 6]);
     });
 
@@ -433,7 +495,7 @@ void main() {
       final Where secondWhere = Where(table: 'table2', col: 'col', val: 2);
       firstWhere.combine(secondWhere);
 
-      expect(secondWhere.statement, 'table2.col = ?');
+      expect(secondWhere.statement, '`table2`.`col` = ?');
       expect(secondWhere.args, <dynamic>[2]);
     });
 
@@ -444,7 +506,8 @@ void main() {
           Where(table: 'table2', col: 'col', val: null, type: WhereType.sqfIs);
       firstWhere.combine(secondWhere);
 
-      expect(firstWhere.statement, 'table1.col IS NULL AND table2.col IS NULL');
+      expect(firstWhere.statement,
+          '`table1`.`col` IS NULL AND `table2`.`col` IS NULL');
       expect(firstWhere.args, <dynamic>[]);
     });
 
@@ -473,8 +536,8 @@ void main() {
       where.addEquals('col2', 0, combinator: WhereCombinator.or);
       where.addIs('col3', 2);
 
-      expect(
-          where.statement, 'col1 NOT IN (NULL, ?) OR col2 = ? AND col3 IS ?');
+      expect(where.statement,
+          '`col1` NOT IN (NULL, ?) OR `col2` = ? AND `col3` IS ?');
       expect(where.args, <dynamic>[1, 0, 2]);
       expect(where.numberOfConditions, 3);
     });
