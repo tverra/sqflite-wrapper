@@ -21,7 +21,8 @@ class Query {
   }) {
     if (groupBy == null && having != null) {
       throw ArgumentError(
-          'HAVING clauses are only permitted when using a groupBy clause');
+        'HAVING clauses are only permitted when using a groupBy clause',
+      );
     }
 
     final StringBuffer query = StringBuffer();

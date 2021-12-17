@@ -23,20 +23,26 @@ void main() {
   group('table', () {
     test('table is given table value', () {
       final Insert insert = Insert('table_name', _map);
-      expect(insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
+      );
     });
 
     test('table name can be empty string', () {
       final Insert insert = Insert('', _map);
-      expect(insert.sql,
-          'INSERT INTO `` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO `` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
+      );
     });
 
     test('escaping names can be disabled', () {
       final Insert insert = Insert('table_name', _map, escapeNames: false);
-      expect(insert.sql,
-          'INSERT INTO table_name (val1, val2, val3) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO table_name (val1, val2, val3) VALUES (?, ?, ?)',
+      );
     });
   });
 
@@ -44,8 +50,10 @@ void main() {
     test('values are added to query', () {
       final Insert insert = Insert('table_name', _map);
 
-      expect(insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
+      );
       expect(insert.args, <dynamic>[1, 2, 3]);
     });
 
@@ -60,9 +68,12 @@ void main() {
     });
 
     test('empty map throws ArgumentError', () {
-      expect(() {
-        Insert('table_name', <String, dynamic>{});
-      }, throwsA(isA<ArgumentError>()));
+      expect(
+        () {
+          Insert('table_name', <String, dynamic>{});
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
   });
 
@@ -100,46 +111,65 @@ void main() {
 
   group('conflictAlgorithm', () {
     test('does add rollback algorithm if given', () {
-      Insert insert = Insert('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.rollback);
+      Insert insert = Insert(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.rollback,
+      );
       expect(
-          insert.sql,
-          'INSERT OR ROLLBACK INTO `table_name` (`val1`, `val2`, `val3`) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR ROLLBACK INTO `table_name` (`val1`, `val2`, `val3`) '
+        'VALUES (?, ?, ?)',
+      );
 
-      insert = Insert('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.abort);
+      insert = Insert(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
       expect(
-          insert.sql,
-          'INSERT OR ABORT INTO `table_name` (`val1`, `val2`, `val3`) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR ABORT INTO `table_name` (`val1`, `val2`, `val3`) '
+        'VALUES (?, ?, ?)',
+      );
 
       insert =
           Insert('table_name', _map, conflictAlgorithm: ConflictAlgorithm.fail);
       expect(
-          insert.sql,
-          'INSERT OR FAIL INTO `table_name` (`val1`, `val2`, `val3`) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR FAIL INTO `table_name` (`val1`, `val2`, `val3`) '
+        'VALUES (?, ?, ?)',
+      );
 
-      insert = Insert('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.ignore);
+      insert = Insert(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
       expect(
-          insert.sql,
-          'INSERT OR IGNORE INTO `table_name` (`val1`, `val2`, `val3`) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR IGNORE INTO `table_name` (`val1`, `val2`, `val3`) '
+        'VALUES (?, ?, ?)',
+      );
 
-      insert = Insert('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      insert = Insert(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
       expect(
-          insert.sql,
-          'INSERT OR REPLACE INTO `table_name` (`val1`, `val2`, `val3`) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR REPLACE INTO `table_name` (`val1`, `val2`, `val3`) '
+        'VALUES (?, ?, ?)',
+      );
     });
 
     test('conflict algorithm is not added if null', () {
       final Insert insert = Insert('table_name', _map, conflictAlgorithm: null);
-      expect(insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
+      );
     });
 
     test('escaping names can be disabled', () {
@@ -150,9 +180,10 @@ void main() {
         escapeNames: false,
       );
       expect(
-          insert.sql,
-          'INSERT OR ROLLBACK INTO table_name (val1, val2, val3) '
-          'VALUES (?, ?, ?)');
+        insert.sql,
+        'INSERT OR ROLLBACK INTO table_name (val1, val2, val3) '
+        'VALUES (?, ?, ?)',
+      );
     });
   });
 
@@ -168,9 +199,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
-          '(SELECT `rowid` FROM `table` WHERE `col` = ?), ?, ?, ?)');
+        insert.sql,
+        'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
+        '(SELECT `rowid` FROM `table` WHERE `col` = ?), ?, ?, ?)',
+      );
       expect(insert.args, <dynamic>['val', 1, 2, 3]);
     });
 
@@ -186,10 +218,11 @@ void main() {
       final Insert insert = Insert('table', _map, rowIdConstraint: where);
 
       expect(
-          insert.sql,
-          'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
-          '(SELECT `rowid` FROM `table` '
-          'WHERE `col1` IS ? OR `col2` IN (?, ?)), ?, ?, ?)');
+        insert.sql,
+        'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
+        '(SELECT `rowid` FROM `table` '
+        'WHERE `col1` IS ? OR `col2` IN (?, ?)), ?, ?, ?)',
+      );
       expect(insert.args, <dynamic>['val1', 'val2', 'val3', 1, 2, 3]);
     });
 
@@ -205,9 +238,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
-          '(SELECT `rowid` FROM `table` WHERE `table`.`col` = ?), ?, ?, ?)');
+        insert.sql,
+        'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
+        '(SELECT `rowid` FROM `table` WHERE `table`.`col` = ?), ?, ?, ?)',
+      );
       expect(insert.args, <dynamic>['val', 1, 2, 3]);
     });
 
@@ -219,9 +253,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
-          '(SELECT `rowid` FROM `table` WHERE `col` IS NOT NULL), ?, ?, ?)');
+        insert.sql,
+        'INSERT INTO `table` (`rowid`, `val1`, `val2`, `val3`) VALUES ('
+        '(SELECT `rowid` FROM `table` WHERE `col` IS NOT NULL), ?, ?, ?)',
+      );
       expect(insert.args, <dynamic>[1, 2, 3]);
     });
 
@@ -232,8 +267,10 @@ void main() {
         rowIdConstraint: Where(),
       );
 
-      expect(insert.sql,
-          'INSERT INTO `table` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)');
+      expect(
+        insert.sql,
+        'INSERT INTO `table` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
+      );
       expect(insert.args, <dynamic>[1, 2, 3]);
     });
 
@@ -248,9 +285,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table` (`rowid`) VALUES ('
-          '(SELECT `rowid` FROM `table` WHERE `col` = ?))');
+        insert.sql,
+        'INSERT INTO `table` (`rowid`) VALUES ('
+        '(SELECT `rowid` FROM `table` WHERE `col` = ?))',
+      );
       expect(insert.args, <dynamic>['val']);
     });
 
@@ -267,9 +305,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO table (rowid, val1, val2, val3) VALUES ('
-          '(SELECT rowid FROM table WHERE col = ?), ?, ?, ?)');
+        insert.sql,
+        'INSERT INTO table (rowid, val1, val2, val3) VALUES ('
+        '(SELECT rowid FROM table WHERE col = ?), ?, ?, ?)',
+      );
       expect(insert.args, <dynamic>['val', 1, 2, 3]);
     });
   });
@@ -277,49 +316,73 @@ void main() {
   group('upsert', () {
     test('error if both conflictAlgorithm and upsertConflictValue has values',
         () {
-      expect(() {
-        Insert('table_name', _map,
+      expect(
+        () {
+          Insert(
+            'table_name',
+            _map,
             conflictAlgorithm: ConflictAlgorithm.replace,
-            upsertConflictValues: <String>['col']);
-      }, throwsA(isA<ArgumentError>()));
+            upsertConflictValues: <String>['col'],
+          );
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('error if both conflictAlgorithm and upsertAction has values', () {
-      expect(() {
-        Insert('table_name', _map,
+      expect(
+        () {
+          Insert(
+            'table_name',
+            _map,
             conflictAlgorithm: ConflictAlgorithm.replace,
-            upsertAction: Update.forUpsert(_map));
-      }, throwsA(isA<ArgumentError>()));
+            upsertAction: Update.forUpsert(_map),
+          );
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('argumentError is thrown if upsertConflictValue is null', () {
-      expect(() {
-        Insert(
-          'table_name',
-          _map,
-          upsertConflictValues: null,
-          upsertAction: Update.forUpsert(_map),
-        );
-      }, throwsA(isA<ArgumentError>()));
+      expect(
+        () {
+          Insert(
+            'table_name',
+            _map,
+            upsertConflictValues: null,
+            upsertAction: Update.forUpsert(_map),
+          );
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('argumentError is thrown if upsertAction is null', () {
-      expect(() {
-        Insert(
-          'table_name',
-          _map,
-          upsertConflictValues: <String>['col'],
-          upsertAction: null,
-        );
-      }, throwsA(isA<ArgumentError>()));
+      expect(
+        () {
+          Insert(
+            'table_name',
+            _map,
+            upsertConflictValues: <String>['col'],
+            upsertAction: null,
+          );
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('argumentError is thrown if forUpsert is false', () {
-      expect(() {
-        Insert('table_name', _map,
+      expect(
+        () {
+          Insert(
+            'table_name',
+            _map,
             conflictAlgorithm: ConflictAlgorithm.replace,
-            upsertAction: Update('table_name', _map));
-      }, throwsA(isA<ArgumentError>()));
+            upsertAction: Update('table_name', _map),
+          );
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('upsert statement is created', () {
@@ -332,24 +395,29 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
-          'ON CONFLICT (`val1`) DO UPDATE SET '
-          '`val1` = ?, `val2` = ?, `val3` = ?');
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
+        'ON CONFLICT (`val1`) DO UPDATE SET '
+        '`val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(insert.args, <dynamic>[1, 2, 3, 1, 2, 3]);
     });
 
     test('upsert statement is created with multiple upsertConflictValues', () {
       final Update update = Update.forUpsert(_map);
-      final Insert insert = Insert('table_name', _map,
-          upsertConflictValues: <String>['val1', 'val2', 'val3'],
-          upsertAction: update);
+      final Insert insert = Insert(
+        'table_name',
+        _map,
+        upsertConflictValues: <String>['val1', 'val2', 'val3'],
+        upsertAction: update,
+      );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
-          'ON CONFLICT (`val1`, `val2`, `val3`) '
-          'DO UPDATE SET `val1` = ?, `val2` = ?, `val3` = ?');
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
+        'ON CONFLICT (`val1`, `val2`, `val3`) '
+        'DO UPDATE SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(insert.args, <dynamic>[1, 2, 3, 1, 2, 3]);
     });
 
@@ -363,9 +431,10 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
-          'ON CONFLICT () DO UPDATE SET `val1` = ?, `val2` = ?, `val3` = ?');
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
+        'ON CONFLICT () DO UPDATE SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(insert.args, <dynamic>[1, 2, 3, 1, 2, 3]);
     });
 
@@ -382,11 +451,12 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
-          'ON CONFLICT (`val1`) DO UPDATE SET '
-          '`val1` = ?, `val2` = ?, `val3` = ? '
-          'WHERE `table`.`col` = ?');
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
+        'ON CONFLICT (`val1`) DO UPDATE SET '
+        '`val1` = ?, `val2` = ?, `val3` = ? '
+        'WHERE `table`.`col` = ?',
+      );
       expect(insert.args, <dynamic>[1, 2, 3, 1, 2, 3, 'val']);
     });
 
@@ -403,10 +473,11 @@ void main() {
       );
 
       expect(
-          insert.sql,
-          'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
-          'ON CONFLICT (`val1`) DO UPDATE OR REPLACE '
-          'SET `val1` = ?, `val2` = ?, `val3` = ?');
+        insert.sql,
+        'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?) '
+        'ON CONFLICT (`val1`) DO UPDATE OR REPLACE '
+        'SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(insert.args, <dynamic>[1, 2, 3, 1, 2, 3]);
     });
 

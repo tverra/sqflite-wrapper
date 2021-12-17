@@ -36,15 +36,21 @@ void main() {
     });
 
     test('col is asserted not null', () {
-      expect(() {
-        OrderBy(table: 'table', orderType: OrderType.asc);
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          OrderBy(table: 'table', orderType: OrderType.asc);
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('order type is asserted not null', () {
-      expect(() {
-        OrderBy(table: 'table', col: 'col');
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          OrderBy(table: 'table', col: 'col');
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('table name is optional', () {
@@ -148,8 +154,10 @@ void main() {
       customOrderBy.customOrderBy('COALESCE(`col1`, 0)', OrderType.asc);
       customOrderBy.customOrderBy('MAX(COALESCE(`col2`, 0))', OrderType.desc);
 
-      expect(customOrderBy.sql,
-          'COALESCE(`col1`, 0) ASC, MAX(COALESCE(`col2`, 0)) DESC');
+      expect(
+        customOrderBy.sql,
+        'COALESCE(`col1`, 0) ASC, MAX(COALESCE(`col2`, 0)) DESC',
+      );
     });
 
     test('col can be empty string', () {

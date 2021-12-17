@@ -78,8 +78,11 @@ class OrderBy {
     _sql = buffer.toString();
   }
 
-  void customOrderBy(String ordering, OrderType orderType,
-      {bool invertNullOrder = false}) {
+  void customOrderBy(
+    String ordering,
+    OrderType orderType, {
+    bool invertNullOrder = false,
+  }) {
     final StringBuffer buffer = StringBuffer();
     buffer.write(_sql);
     if (hasClause()) buffer.write(', ');

@@ -247,7 +247,7 @@ void main() {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
         type: SqfType.integer,
-        defaultValue: "1",
+        defaultValue: '1',
       );
 
       final String actual = column.sql;
@@ -286,7 +286,7 @@ void main() {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
         type: SqfType.real,
-        defaultValue: "1",
+        defaultValue: '1',
       );
 
       final String actual = column.sql;
@@ -299,7 +299,7 @@ void main() {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
         type: SqfType.numeric,
-        defaultValue: "1",
+        defaultValue: '1',
       );
 
       final String actual = column.sql;
@@ -323,7 +323,7 @@ void main() {
     test('default value is correct for String', () {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
-        defaultValue: "1",
+        defaultValue: '1',
       );
 
       final String actual = column.sql;
@@ -363,7 +363,7 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = "`column_name` DEFAULT CURRENT_DATE";
+      const String expected = '`column_name` DEFAULT CURRENT_DATE';
 
       expect(actual, expected);
     });
@@ -371,11 +371,11 @@ void main() {
     test('default value is correct for function', () {
       final SqfColumn column = SqfColumn(
         name: 'column_name',
-        defaultValue: SqfFunction.abs("col"),
+        defaultValue: SqfFunction.abs('col'),
       );
 
       final String actual = column.sql;
-      const String expected = "`column_name` DEFAULT (ABS(`col`))";
+      const String expected = '`column_name` DEFAULT (ABS(`col`))';
 
       expect(actual, expected);
     });
@@ -398,9 +398,12 @@ void main() {
         properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
       );
 
-      expect(() {
-        column.drop('table_name');
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          column.drop('table_name');
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts index not unique', () {
@@ -409,9 +412,12 @@ void main() {
         properties: <SqfColumnProperty>[SqfColumnProperty.unique],
       );
 
-      expect(() {
-        column.drop('table_name');
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          column.drop('table_name');
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 

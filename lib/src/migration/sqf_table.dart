@@ -52,27 +52,37 @@ class SqfTable {
   }
 
   String addColumn(SqfColumn newColumn) {
-    assert(_columns.where((SqfColumn c) => c.name == newColumn.name).isEmpty,
-        'Duplicate column name');
+    assert(
+      _columns.where((SqfColumn c) => c.name == newColumn.name).isEmpty,
+      'Duplicate column name',
+    );
     if (newColumn.properties != null) {
-      assert(!newColumn.properties!.contains(SqfColumnProperty.primaryKey),
-          "Added column can't be primary key");
-      assert(!newColumn.properties!.contains(SqfColumnProperty.unique),
-          "Added column can't be unique");
       assert(
-          !newColumn.properties!.contains(SqfColumnProperty.notNull) &&
-              (newColumn.defaultValue == null ||
-                  newColumn.defaultValue == SqfColumnValue.nullValue),
-          'Added column with NOT NULL constraint must have a default value '
-          'other than NULL');
+        !newColumn.properties!.contains(SqfColumnProperty.primaryKey),
+        "Added column can't be primary key",
+      );
+      assert(
+        !newColumn.properties!.contains(SqfColumnProperty.unique),
+        "Added column can't be unique",
+      );
+      assert(
+        !newColumn.properties!.contains(SqfColumnProperty.notNull) &&
+            (newColumn.defaultValue == null ||
+                newColumn.defaultValue == SqfColumnValue.nullValue),
+        'Added column with NOT NULL constraint must have a default value '
+        'other than NULL',
+      );
     }
     if (newColumn.defaultValue != null) {
       assert(
-          newColumn.defaultValue is! SqfColumnValue ||
-              newColumn.defaultValue == SqfColumnValue.nullValue,
-          "Added column can't have ${newColumn.defaultValue} as default value");
-      assert(newColumn.defaultValue is! SqfFunction,
-          "Added column can't have an expression as default value");
+        newColumn.defaultValue is! SqfColumnValue ||
+            newColumn.defaultValue == SqfColumnValue.nullValue,
+        "Added column can't have ${newColumn.defaultValue} as default value",
+      );
+      assert(
+        newColumn.defaultValue is! SqfFunction,
+        "Added column can't have an expression as default value",
+      );
     }
 
     _columns.add(newColumn);

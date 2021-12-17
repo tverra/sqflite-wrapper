@@ -76,9 +76,12 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.create;
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.create;
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 
@@ -222,9 +225,12 @@ void main() {
         ],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(name: 'col2'));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(SqfColumn(name: 'col2'));
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts index not primary key', () {
@@ -233,12 +239,17 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts index not unique', () {
@@ -247,12 +258,17 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          properties: <SqfColumnProperty>[SqfColumnProperty.unique],
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts not null default value if constraint is NOT NULL', () {
@@ -261,20 +277,30 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          defaultValue: SqfColumnValue.nullValue,
-          properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              defaultValue: SqfColumnValue.nullValue,
+              properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts invalid default value', () {
@@ -283,12 +309,17 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          defaultValue: SqfColumnValue.currentTimestamp,
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              defaultValue: SqfColumnValue.currentTimestamp,
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('asserts default value not an expression', () {
@@ -297,12 +328,17 @@ void main() {
         columns: <SqfColumn>[],
       );
 
-      expect(() {
-        table.addColumn(SqfColumn(
-          name: 'col2',
-          defaultValue: SqfFunction.max("1"),
-        ));
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          table.addColumn(
+            SqfColumn(
+              name: 'col2',
+              defaultValue: SqfFunction.max('1'),
+            ),
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 

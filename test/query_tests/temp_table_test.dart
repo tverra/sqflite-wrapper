@@ -9,9 +9,10 @@ void main() {
       final TempTable tempTable = TempTable('test_test');
 
       expect(
-          tempTable.createTableSql,
-          'CREATE TEMP TABLE `_temp_table_test_test` '
-          '(`test_test_value` INT NOT NULL)');
+        tempTable.createTableSql,
+        'CREATE TEMP TABLE `_temp_table_test_test` '
+        '(`test_test_value` INT NOT NULL)',
+      );
     });
 
     test('creating temp table creates drop-statement from identifier', () {
@@ -24,23 +25,26 @@ void main() {
       final TempTable tempTable = TempTable('temptable');
 
       expect(
-          tempTable.query.sql,
-          'SELECT temp.`_temp_table_temptable`.`temptable_value` '
-          'FROM temp.`_temp_table_temptable`');
+        tempTable.query.sql,
+        'SELECT temp.`_temp_table_temptable`.`temptable_value` '
+        'FROM temp.`_temp_table_temptable`',
+      );
     });
 
     test('escaping names can be disabled', () {
       final TempTable tempTable = TempTable('test_test', escapeNames: false);
 
       expect(
-          tempTable.createTableSql,
-          'CREATE TEMP TABLE _temp_table_test_test '
-              '(test_test_value INT NOT NULL)');
+        tempTable.createTableSql,
+        'CREATE TEMP TABLE _temp_table_test_test '
+        '(test_test_value INT NOT NULL)',
+      );
       expect(tempTable.dropTableSql, 'DROP TABLE temp._temp_table_test_test');
       expect(
-          tempTable.query.sql,
-          'SELECT temp._temp_table_test_test.test_test_value '
-              'FROM temp._temp_table_test_test');
+        tempTable.query.sql,
+        'SELECT temp._temp_table_test_test.test_test_value '
+        'FROM temp._temp_table_test_test',
+      );
     });
   });
 
@@ -53,8 +57,10 @@ void main() {
 
       tempTable.insertValues(batch, <int>[1, 2, 3]);
 
-      expect(batch.statements,
-          <String>[insertStatement, insertStatement, insertStatement]);
+      expect(
+        batch.statements,
+        <String>[insertStatement, insertStatement, insertStatement],
+      );
       expect(batch.arguments, <int>[1, 2, 3]);
     });
 
@@ -66,8 +72,10 @@ void main() {
 
       tempTable.insertValues(batch, <int>[1, 2, 3], escapeNames: false);
 
-      expect(batch.statements,
-          <String>[insertStatement, insertStatement, insertStatement]);
+      expect(
+        batch.statements,
+        <String>[insertStatement, insertStatement, insertStatement],
+      );
       expect(batch.arguments, <int>[1, 2, 3]);
     });
 
@@ -79,8 +87,10 @@ void main() {
 
       tempTable.insertValues(batch, <String>['1', '2', '3']);
 
-      expect(batch.statements,
-          <String>[insertStatement, insertStatement, insertStatement]);
+      expect(
+        batch.statements,
+        <String>[insertStatement, insertStatement, insertStatement],
+      );
       expect(batch.arguments, <String>['1', '2', '3']);
     });
   });

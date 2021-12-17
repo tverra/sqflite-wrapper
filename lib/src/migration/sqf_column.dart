@@ -5,7 +5,7 @@ class SqfColumn {
   final SqfType? _type;
   final List<SqfColumnProperty>? _properties;
   final SqfReferences? _references;
-  final dynamic _defaultValue;
+  final Object? _defaultValue;
 
   SqfColumn({
     required String name,
@@ -42,6 +42,7 @@ class SqfColumn {
 
   String get sql {
     final StringBuffer buffer = StringBuffer();
+    final Object? defaultValue = _defaultValue;
 
     buffer.write('`$_name`');
 
@@ -62,37 +63,37 @@ class SqfColumn {
       }
     }
 
-    if (_defaultValue != null) {
+    if (defaultValue != null) {
       buffer.write(' DEFAULT ');
 
-      if (_defaultValue is SqfColumnValue) {
-        buffer.write(sqfColumnValues[_defaultValue.index]);
-      } else if (_defaultValue is SqfFunction) {
-        buffer.write('(${_defaultValue.sql})');
+      if (defaultValue is SqfColumnValue) {
+        buffer.write(sqfColumnValues[defaultValue.index]);
+      } else if (defaultValue is SqfFunction) {
+        buffer.write('(${defaultValue.sql})');
       } else if (_type == null) {
-        if (_defaultValue is num) {
-          buffer.write(_defaultValue.toString());
-        } else if (_defaultValue is String) {
-          buffer.write('"${_defaultValue.toString()}"');
+        if (defaultValue is num) {
+          buffer.write(defaultValue.toString());
+        } else if (defaultValue is String) {
+          buffer.write('"$defaultValue"');
         } else {
-          buffer.write('(${_defaultValue.toString()})');
+          buffer.write('(${defaultValue.toString()})');
         }
       } else {
         switch (_type!) {
           case SqfType.integer:
-            buffer.write(_defaultValue.toString());
+            buffer.write(defaultValue.toString());
             break;
           case SqfType.text:
-            buffer.write('"${_defaultValue.toString()}"');
+            buffer.write('"${defaultValue.toString()}"');
             break;
           case SqfType.blob:
-            buffer.write('(${_defaultValue.toString()})');
+            buffer.write('(${defaultValue.toString()})');
             break;
           case SqfType.real:
-            buffer.write(_defaultValue.toString());
+            buffer.write(defaultValue.toString());
             break;
           case SqfType.numeric:
-            buffer.write(_defaultValue.toString());
+            buffer.write(defaultValue.toString());
             break;
         }
       }
@@ -107,10 +108,14 @@ class SqfColumn {
 
   String drop(String tableName) {
     if (_properties != null) {
-      assert(!_properties!.contains(SqfColumnProperty.primaryKey),
-          "Dropped column can't be primary key");
-      assert(!_properties!.contains(SqfColumnProperty.unique),
-          "Dropped column can't be unique");
+      assert(
+        !_properties!.contains(SqfColumnProperty.primaryKey),
+        "Dropped column can't be primary key",
+      );
+      assert(
+        !_properties!.contains(SqfColumnProperty.unique),
+        "Dropped column can't be unique",
+      );
     }
 
     return 'ALTER TABLE `$tableName` DROP COLUMN `$_name`;';

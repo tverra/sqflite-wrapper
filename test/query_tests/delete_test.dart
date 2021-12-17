@@ -32,7 +32,9 @@ void main() {
       final Delete delete = Delete('table_name', where: where);
 
       expect(
-          delete.sql, 'DELETE FROM `table_name` WHERE `table_name`.`col` = ?');
+        delete.sql,
+        'DELETE FROM `table_name` WHERE `table_name`.`col` = ?',
+      );
       expect(delete.args, <dynamic>['val']);
     });
 
@@ -42,19 +44,26 @@ void main() {
       final Delete delete = Delete('table_name', where: where);
 
       expect(
-          delete.sql,
-          'DELETE FROM `table_name` '
-          'WHERE `table_name`.`col1` = ? OR `col2` IS ?');
+        delete.sql,
+        'DELETE FROM `table_name` '
+        'WHERE `table_name`.`col1` = ? OR `col2` IS ?',
+      );
       expect(delete.args, <dynamic>['val1', 'val2']);
     });
 
     test('without args is added to delete', () {
       final Where where = Where(
-          table: 'table_name', col: 'col', val: null, type: WhereType.sqfIs);
+        table: 'table_name',
+        col: 'col',
+        val: null,
+        type: WhereType.sqfIs,
+      );
       final Delete delete = Delete('table_name', where: where);
 
-      expect(delete.sql,
-          'DELETE FROM `table_name` WHERE `table_name`.`col` IS NULL');
+      expect(
+        delete.sql,
+        'DELETE FROM `table_name` WHERE `table_name`.`col` IS NULL',
+      );
       expect(delete.args, <dynamic>[]);
     });
 

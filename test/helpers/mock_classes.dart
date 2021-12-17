@@ -9,8 +9,10 @@ class MockDatabase extends Mock implements Database {
   }
 
   @override
-  Future<T> transaction<T>(Future<T> Function(Transaction txn) action,
-      {bool? exclusive}) {
+  Future<T> transaction<T>(
+    Future<T> Function(Transaction txn) action, {
+    bool? exclusive,
+  }) {
     final Transaction transaction = MockTransaction();
     _transactions.add(transaction);
 
@@ -65,8 +67,11 @@ class MockBatch extends Mock implements Batch {
   }
 
   @override
-  Future<List<Object?>> commit(
-      {bool? exclusive, bool? noResult, bool? continueOnError}) async {
+  Future<List<Object?>> commit({
+    bool? exclusive,
+    bool? noResult,
+    bool? continueOnError,
+  }) async {
     return <Object?>[];
   }
 }

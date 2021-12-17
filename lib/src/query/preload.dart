@@ -64,11 +64,13 @@ class Preload {
       childKey,
       escapeNames: escapeNames,
     );
-    columns.addAll(_aliasColumns(
-      parentColumns,
-      prefix: parentTable,
-      escapeNames: escapeNames,
-    ));
+    columns.addAll(
+      _aliasColumns(
+        parentColumns,
+        prefix: parentTable,
+        escapeNames: escapeNames,
+      ),
+    );
 
     _numberOfPreLoads++;
   }
@@ -96,7 +98,9 @@ class Preload {
   }
 
   static Map<String, dynamic>? extractPreLoadedMap(
-      String table, Map<String, dynamic> map) {
+    String table,
+    Map<String, dynamic> map,
+  ) {
     final Map<String, dynamic> extracted = <String, dynamic>{};
 
     for (final String key in map.keys) {
@@ -108,8 +112,9 @@ class Preload {
           strippedKey.substring(0, strippedTable.length + 2) ==
               '_${strippedTable}_') {
         extracted.putIfAbsent(
-            strippedKey.substring(strippedTable.length + 2, strippedKey.length),
-            () => map[key]);
+          strippedKey.substring(strippedTable.length + 2, strippedKey.length),
+          () => map[key],
+        );
       }
     }
     return extracted.isNotEmpty ? extracted : null;

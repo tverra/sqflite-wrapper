@@ -16,9 +16,12 @@ void main() {
     });
 
     test('asserts column list not empty', () {
-      expect(() {
-        SqfIndex(tableName: 'table_name', columnNames: <String>[]);
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          SqfIndex(tableName: 'table_name', columnNames: <String>[]);
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('index name can be defined', () {
@@ -82,33 +85,38 @@ void main() {
       );
 
       expect(
-          index.sql,
-          'CREATE UNIQUE INDEX `idx_table_name_col` '
-          'ON `table_name` (`col`);');
+        index.sql,
+        'CREATE UNIQUE INDEX `idx_table_name_col` '
+        'ON `table_name` (`col`);',
+      );
 
       index = index.copyWith(tableName: 'new_table_name');
       expect(
-          index.sql,
-          'CREATE UNIQUE INDEX `idx_table_name_col` '
-          'ON `new_table_name` (`col`);');
+        index.sql,
+        'CREATE UNIQUE INDEX `idx_table_name_col` '
+        'ON `new_table_name` (`col`);',
+      );
 
       index = index.copyWith(columnNames: <String>['new_col']);
       expect(
-          index.sql,
-          'CREATE UNIQUE INDEX `idx_table_name_col` '
-          'ON `new_table_name` (`new_col`);');
+        index.sql,
+        'CREATE UNIQUE INDEX `idx_table_name_col` '
+        'ON `new_table_name` (`new_col`);',
+      );
 
       index = index.copyWith(unique: false);
       expect(
-          index.sql,
-          'CREATE INDEX `idx_table_name_col` '
-          'ON `new_table_name` (`new_col`);');
+        index.sql,
+        'CREATE INDEX `idx_table_name_col` '
+        'ON `new_table_name` (`new_col`);',
+      );
 
       index = index.copyWith(name: 'new_index_name');
       expect(
-          index.sql,
-          'CREATE INDEX `new_index_name` '
-          'ON `new_table_name` (`new_col`);');
+        index.sql,
+        'CREATE INDEX `new_index_name` '
+        'ON `new_table_name` (`new_col`);',
+      );
     });
   });
 }

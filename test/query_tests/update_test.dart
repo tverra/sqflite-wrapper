@@ -12,8 +12,10 @@ void main() {
   group('table', () {
     test('table is given table value', () {
       final Update update = Update('table_name', _map);
-      expect(update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?');
+      expect(
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
     });
 
     test('table name can be empty string', () {
@@ -31,8 +33,10 @@ void main() {
     test('values are added to query', () {
       final Update update = Update('table_name', _map);
 
-      expect(update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?');
+      expect(
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(update.args, <dynamic>[1, 2, 3]);
     });
 
@@ -45,9 +49,12 @@ void main() {
     });
 
     test('empty map throws ArgumentError', () {
-      expect(() {
-        Update('table_name', <String, dynamic>{});
-      }, throwsA(isA<ArgumentError>()));
+      expect(
+        () {
+          Update('table_name', <String, dynamic>{});
+        },
+        throwsA(isA<ArgumentError>()),
+      );
     });
   });
 
@@ -57,9 +64,10 @@ void main() {
       final Update update = Update('table_name', _map, where: where);
 
       expect(
-          update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
-          'WHERE `table_name`.`col` = ?');
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
+        'WHERE `table_name`.`col` = ?',
+      );
       expect(update.args, <dynamic>[1, 2, 3, 'val']);
     });
 
@@ -69,21 +77,27 @@ void main() {
       final Update update = Update('table_name', _map, where: where);
 
       expect(
-          update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
-          'WHERE `table_name`.`col1` = ? OR `col2` IS ?');
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
+        'WHERE `table_name`.`col1` = ? OR `col2` IS ?',
+      );
       expect(update.args, <dynamic>[1, 2, 3, 'val1', 'val2']);
     });
 
     test('without args is added to update', () {
       final Where where = Where(
-          table: 'table_name', col: 'col', val: null, type: WhereType.sqfIs);
+        table: 'table_name',
+        col: 'col',
+        val: null,
+        type: WhereType.sqfIs,
+      );
       final Update update = Update('table_name', _map, where: where);
 
       expect(
-          update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
-          'WHERE `table_name`.`col` IS NULL');
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ? '
+        'WHERE `table_name`.`col` IS NULL',
+      );
       expect(update.args, <dynamic>[1, 2, 3]);
     });
 
@@ -91,52 +105,74 @@ void main() {
       final Where where = Where();
       final Update update = Update('table_name', _map, where: where);
 
-      expect(update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?');
+      expect(
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
       expect(update.args, <dynamic>[1, 2, 3]);
     });
   });
 
   group('conflictAlgorithm', () {
     test('does add rollback algorithm if given', () {
-      Update update = Update('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.rollback);
+      Update update = Update(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.rollback,
+      );
       expect(
-          update.sql,
-          'UPDATE OR ROLLBACK `table_name` '
-          'SET `val1` = ?, `val2` = ?, `val3` = ?');
+        update.sql,
+        'UPDATE OR ROLLBACK `table_name` '
+        'SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
 
-      update = Update('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.abort);
+      update = Update(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.abort,
+      );
       expect(
-          update.sql,
-          'UPDATE OR ABORT `table_name` '
-          'SET `val1` = ?, `val2` = ?, `val3` = ?');
+        update.sql,
+        'UPDATE OR ABORT `table_name` '
+        'SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
 
       update =
           Update('table_name', _map, conflictAlgorithm: ConflictAlgorithm.fail);
-      expect(update.sql,
-          'UPDATE OR FAIL `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?');
-
-      update = Update('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.ignore);
       expect(
-          update.sql,
-          'UPDATE OR IGNORE `table_name` '
-          'SET `val1` = ?, `val2` = ?, `val3` = ?');
+        update.sql,
+        'UPDATE OR FAIL `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
 
-      update = Update('table_name', _map,
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      update = Update(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
       expect(
-          update.sql,
-          'UPDATE OR REPLACE `table_name` '
-          'SET `val1` = ?, `val2` = ?, `val3` = ?');
+        update.sql,
+        'UPDATE OR IGNORE `table_name` '
+        'SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
+
+      update = Update(
+        'table_name',
+        _map,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      expect(
+        update.sql,
+        'UPDATE OR REPLACE `table_name` '
+        'SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
     });
 
     test('conflict algorithm is not added if null', () {
       final Update update = Update('table_name', _map, conflictAlgorithm: null);
-      expect(update.sql,
-          'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?');
+      expect(
+        update.sql,
+        'UPDATE `table_name` SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
     });
 
     test('escaping names can be disabled', () {
@@ -146,8 +182,10 @@ void main() {
         conflictAlgorithm: ConflictAlgorithm.rollback,
         escapeNames: false,
       );
-      expect(update.sql,
-          'UPDATE OR ROLLBACK table_name SET val1 = ?, val2 = ?, val3 = ?');
+      expect(
+        update.sql,
+        'UPDATE OR ROLLBACK table_name SET val1 = ?, val2 = ?, val3 = ?',
+      );
     });
   });
 
@@ -181,17 +219,20 @@ void main() {
       final Update update = Update.forUpsert(_map, where: where);
 
       expect(
-          update.sql,
-          'UPDATE SET `val1` = ?, `val2` = ?, `val3` = ? '
-          'WHERE `table_name`.`col` = ?');
+        update.sql,
+        'UPDATE SET `val1` = ?, `val2` = ?, `val3` = ? '
+        'WHERE `table_name`.`col` = ?',
+      );
       expect(update.args, <dynamic>[1, 2, 3, 'val']);
     });
 
     test('conflictAlgorithm is added', () {
       final Update update =
           Update.forUpsert(_map, conflictAlgorithm: ConflictAlgorithm.rollback);
-      expect(update.sql,
-          'UPDATE OR ROLLBACK SET `val1` = ?, `val2` = ?, `val3` = ?');
+      expect(
+        update.sql,
+        'UPDATE OR ROLLBACK SET `val1` = ?, `val2` = ?, `val3` = ?',
+      );
     });
 
     test('escaping names can be disabled', () {
