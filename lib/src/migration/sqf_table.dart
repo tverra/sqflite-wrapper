@@ -3,15 +3,19 @@ part of sqflite_wrapper;
 class SqfTable {
   String _name;
   final List<SqfColumn> _columns;
+  final List<String>? _unique;
 
   SqfTable({
     required String name,
     required List<SqfColumn> columns,
+    List<String>? unique,
   })  : _name = name,
-        _columns = columns;
+        _columns = columns,
+        _unique = unique;
 
   String get create {
     assert(_columns.isNotEmpty, 'At least one column is required');
+    final List<String>? unique = _unique;
 
     final StringBuffer buffer = StringBuffer();
 
@@ -23,6 +27,19 @@ class SqfTable {
       if (i < _columns.length - 1) {
         buffer.write(', ');
       }
+    }
+
+    if (unique != null && unique.isNotEmpty) {
+      buffer.write(', UNIQUE(');
+
+      for (int i = 0; i < unique.length; i++) {
+        buffer.write('`${unique[i]}`');
+
+        if (i < unique.length - 1) {
+          buffer.write(', ');
+        }
+      }
+      buffer.write(')');
     }
 
     buffer.write(');');

@@ -83,6 +83,80 @@ void main() {
         throwsA(isA<AssertionError>()),
       );
     });
+
+    test('unique constraint is added', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'col1',
+            type: SqfType.integer,
+            properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
+          ),
+          SqfColumn(
+            name: 'col2',
+            type: SqfType.integer,
+          ),
+          SqfColumn(
+            name: 'col3',
+            type: SqfType.integer,
+          ),
+          SqfColumn(
+            name: 'col4',
+            type: SqfType.integer,
+          ),
+        ],
+        unique: <String>['col2'],
+      );
+
+      final String actual = table.create;
+      const String expected =
+          'CREATE TABLE `table_name` (`col1` INTEGER PRIMARY KEY, '
+          '`col2` INTEGER, '
+          '`col3` INTEGER, '
+          '`col4` INTEGER, '
+          'UNIQUE(`col2`)'
+          ');';
+
+      expect(actual, expected);
+    });
+
+    test('unique constraint is added on multiple columns', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'col1',
+            type: SqfType.integer,
+            properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
+          ),
+          SqfColumn(
+            name: 'col2',
+            type: SqfType.integer,
+          ),
+          SqfColumn(
+            name: 'col3',
+            type: SqfType.integer,
+          ),
+          SqfColumn(
+            name: 'col4',
+            type: SqfType.integer,
+          ),
+        ],
+        unique: <String>['col2, col3, col4'],
+      );
+
+      final String actual = table.create;
+      const String expected =
+          'CREATE TABLE `table_name` (`col1` INTEGER PRIMARY KEY, '
+          '`col2` INTEGER, '
+          '`col3` INTEGER, '
+          '`col4` INTEGER, '
+          'UNIQUE(`col2, col3, col4`)'
+          ');';
+
+      expect(actual, expected);
+    });
   });
 
   group('drop table', () {
