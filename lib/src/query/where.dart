@@ -5,6 +5,7 @@ class Where {
   final List<dynamic> args = <dynamic>[];
   String _statement = '';
   int _numberOfConditions = 0;
+  WhereCombinator? _startGroup;
 
   Where({
     String? table,
@@ -106,6 +107,19 @@ class Where {
   }
 
   String _getCombinator(WhereCombinator? combinator) {
+    final WhereCombinator? startGroup = _startGroup;
+    _startGroup = null;
+
+    if (startGroup != null) {
+      if (_statement == '') {
+        return '(';
+      } else if (combinator == null) {
+        return ' ${_whereCombinators[startGroup.index]} (';
+      } else {
+        return ' ${_whereCombinators[combinator.index]} (';
+      }
+    }
+
     if (_statement == '') {
       return '';
     } else if (combinator == null) {
@@ -113,6 +127,18 @@ class Where {
     } else {
       return ' ${_whereCombinators[combinator.index]} ';
     }
+  }
+
+  void startGroup({WhereCombinator? combinator}) {
+    if (combinator != null) {
+      _startGroup = combinator;
+    } else {
+      _startGroup = WhereCombinator.and;
+    }
+  }
+
+  void endGroup() {
+    _statement = '$_statement)';
   }
 
   void add(
@@ -124,8 +150,7 @@ class Where {
     bool not = false,
     bool escapeNames = true,
   }) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
     buffer.write(_getCombinator(combinator));
     if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
     buffer.write(escapeNames ? '`$col`' : col);
@@ -150,8 +175,7 @@ class Where {
     bool not = false,
     bool escapeNames = true,
   }) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
     buffer.write(_getCombinator(combinator));
     if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
     buffer.write(escapeNames ? '`$col`' : col);
@@ -181,8 +205,7 @@ class Where {
     bool not = false,
     bool escapeNames = true,
   }) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
     buffer.write(_getCombinator(combinator));
     if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
     buffer.write(escapeNames ? '`$col`' : col);
@@ -218,8 +241,7 @@ class Where {
     bool not = false,
     bool escapeNames = true,
   }) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
     buffer.write(_getCombinator(combinator));
     if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
     buffer.write(escapeNames ? '`$col`' : col);
@@ -245,8 +267,7 @@ class Where {
     bool not = false,
     bool escapeNames = true,
   }) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
     buffer.write(_getCombinator(combinator));
     if (table != null) buffer.write(escapeNames ? '`$table`.' : '$table.');
     buffer.write(escapeNames ? '`$col`' : col);
@@ -269,8 +290,7 @@ class Where {
   }
 
   void combine(Where where, {WhereCombinator? combinator}) {
-    final StringBuffer buffer = StringBuffer();
-    buffer.write(_statement);
+    final StringBuffer buffer = StringBuffer(_statement);
 
     if (where.hasClause()) {
       buffer.write(_getCombinator(combinator));

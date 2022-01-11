@@ -68,6 +68,90 @@ void main() {
     });
   });
 
+  group('group', () {
+    test('adds parentheses around first statement', () async {
+      final Where where = Where();
+      where.startGroup();
+      where.addEquals('column', 'value');
+      where.endGroup();
+
+      expect(where.statement, '(`column` = ?)');
+    });
+
+    test('adds parentheses around second statement', () async {
+      final Where where = Where();
+      where.addEquals('column', 'value');
+
+      where.startGroup();
+      where.addEquals('column', 'value');
+      where.endGroup();
+
+      expect(where.statement, '`column` = ? AND (`column` = ?)');
+    });
+
+    test('adds parentheses around two statements statement', () async {
+      final Where where = Where();
+      where.addEquals('column', 'value');
+
+      where.startGroup();
+      where.addEquals('column1', 'value');
+      where.addEquals('column2', 'value');
+      where.endGroup();
+
+      expect(where.statement,
+          '`column` = ? AND (`column1` = ? AND `column2` = ?)');
+    });
+
+    test('group is followed by condition', () async {
+      final Where where = Where();
+      where.addEquals('column', 'value');
+
+      where.startGroup();
+      where.addEquals('column1', 'value');
+      where.addEquals('column2', 'value');
+      where.endGroup();
+
+      where.addEquals('column', 'value');
+
+      expect(
+        where.statement,
+        '`column` = ? AND '
+        '(`column1` = ? AND `column2` = ?) AND `column` = ?',
+      );
+    });
+
+    test("doesn't add combinator before first statement", () async {
+      final Where where = Where();
+      where.startGroup(combinator: WhereCombinator.or);
+      where.addEquals('column', 'value');
+      where.endGroup();
+
+      expect(where.statement, '(`column` = ?)');
+    });
+
+    test('adds combinator before second statement', () async {
+      final Where where = Where();
+      where.addEquals('column', 'value');
+
+      where.startGroup(combinator: WhereCombinator.or);
+      where.addEquals('column', 'value');
+      where.endGroup();
+
+      expect(where.statement, '`column` = ? OR (`column` = ?)');
+    });
+
+    test('uses where-combinator if specified', () async {
+      final Where where = Where();
+      where.addEquals('column', 'value');
+
+      where.startGroup(combinator: WhereCombinator.or);
+      where.addEquals('column', 'value', combinator: WhereCombinator.and);
+      where.endGroup();
+
+      expect(where.statement, '`column` = ? AND (`column` = ?)');
+    });
+  });
+
   group('addEquals', () {
     test('adds "equals"-condition', () {
       final Where where = Where();
