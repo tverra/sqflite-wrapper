@@ -55,6 +55,10 @@ class SqfTable {
     return _name;
   }
 
+  List<SqfColumn> get columns {
+    return _columns;
+  }
+
   String rename(String newName) {
     final String sql = 'ALTER TABLE `$_name` RENAME TO `$newName`;';
     _name = newName;
