@@ -27,6 +27,20 @@ class SqfReferences {
 
     return buffer.toString();
   }
+
+  SqfReferences copyWith({
+    String? foreignTableName,
+    String? foreignColumnName,
+    SqfAction? onUpdate,
+    SqfAction? onDelete,
+  }) {
+    return SqfReferences(
+      foreignTableName: foreignTableName ?? this.foreignTableName,
+      foreignColumnName: foreignColumnName ?? this.foreignColumnName,
+      onUpdate: onUpdate ?? this.onUpdate,
+      onDelete: onDelete ?? this.onDelete,
+    );
+  }
 }
 
 List<String> sqfActions = <String>[

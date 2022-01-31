@@ -2,6 +2,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
 void main() {
+  group('constructor', () {
+    test('mutable members are cloned', () {
+      final List<String> unique = <String>['col1'];
+
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'id',
+            type: SqfType.integer,
+            properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
+          ),
+        ],
+        unique: unique,
+      );
+
+      unique.add('col2');
+
+      expect(table.unique, <String>['col1']);
+    });
+  });
+
   group('create table', () {
     test('table is created with required parameters', () {
       final SqfTable table = SqfTable(
@@ -448,6 +470,142 @@ void main() {
       const String expected = 'CREATE TABLE `table_name` (`col1`, `col3`);';
 
       expect(actual, expected);
+    });
+  });
+
+  group('copyWith', () {
+    test('creates a new instance', () {
+      final SqfColumn column = SqfColumn(
+        name: 'name',
+        type: SqfType.integer,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+          onUpdate: SqfAction.noAction,
+          onDelete: SqfAction.noAction,
+        ),
+        properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+        defaultValue: 0,
+      );
+
+      final SqfColumn cloned = column.copyWith();
+
+      expect(column == cloned, false);
+    });
+
+    test('creates a clone', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'name',
+            type: SqfType.integer,
+            references: SqfReferences(
+              foreignTableName: 'foreign_table_name',
+              foreignColumnName: 'foreign_column_name',
+              onUpdate: SqfAction.noAction,
+              onDelete: SqfAction.noAction,
+            ),
+            properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+            defaultValue: 0,
+          ),
+        ],
+        unique: <String>['col1, col2'],
+      );
+
+      final SqfTable cloned = table.copyWith();
+
+      expect(table.name, cloned.name);
+      expect(table.unique, cloned.unique);
+      expect(table.columns[0].name, cloned.columns[0].name);
+      expect(table.columns[0].type, cloned.columns[0].type);
+      expect(table.columns[0].properties, cloned.columns[0].properties);
+      expect(table.columns[0].defaultValue, cloned.columns[0].defaultValue);
+      expect(
+        table.columns[0].references?.foreignTableName,
+        cloned.columns[0].references?.foreignTableName,
+      );
+      expect(
+        table.columns[0].references?.foreignColumnName,
+        cloned.columns[0].references?.foreignColumnName,
+      );
+      expect(
+        table.columns[0].references?.onUpdate,
+        cloned.columns[0].references?.onUpdate,
+      );
+      expect(
+        table.columns[0].references?.onDelete,
+        cloned.columns[0].references?.onDelete,
+      );
+    });
+
+    test('replaces given attributes', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'name',
+            type: SqfType.integer,
+            references: SqfReferences(
+              foreignTableName: 'foreign_table_name',
+              foreignColumnName: 'foreign_column_name',
+              onUpdate: SqfAction.noAction,
+              onDelete: SqfAction.noAction,
+            ),
+            properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+            defaultValue: 0,
+          ),
+        ],
+        unique: <String>['col1, col2'],
+      );
+
+      final SqfTable cloned = table.copyWith(
+        name: 'test',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'test',
+            type: SqfType.text,
+            references: SqfReferences(
+              foreignTableName: 'test',
+              foreignColumnName: 'test',
+              onUpdate: SqfAction.cascade,
+              onDelete: SqfAction.cascade,
+            ),
+            properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
+            defaultValue: 1,
+          ),
+        ],
+        unique: <String>['test'],
+      );
+
+      expect(cloned.name, 'test');
+      expect(cloned.unique, <String>['test']);
+      expect(cloned.columns[0].name, 'test');
+      expect(cloned.columns[0].type, SqfType.text);
+      expect(
+        cloned.columns[0].properties,
+        <SqfColumnProperty>[SqfColumnProperty.notNull],
+      );
+      expect(cloned.columns[0].defaultValue, 1);
+      expect(cloned.columns[0].references?.foreignTableName, 'test');
+      expect(cloned.columns[0].references?.foreignColumnName, 'test');
+      expect(cloned.columns[0].references?.onUpdate, SqfAction.cascade);
+      expect(cloned.columns[0].references?.onDelete, SqfAction.cascade);
+    });
+
+    test('clones mutable members', () {
+      final List<String> unique = <String>['col1'];
+
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[],
+        unique: unique,
+      );
+
+      final SqfTable cloned = table.copyWith();
+      unique.add('col2');
+
+      expect(cloned.unique, <String>['col1']);
     });
   });
 }

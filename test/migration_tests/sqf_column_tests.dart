@@ -90,6 +90,29 @@ void main() {
           'ON UPDATE NO ACTION ON DELETE CASCADE';
       expect(actual, expected);
     });
+
+    test('clones mutable members', () {
+      final List<SqfColumnProperty> properties = <SqfColumnProperty>[
+        SqfColumnProperty.notNull,
+      ];
+
+      final SqfColumn column = SqfColumn(
+        name: 'column_name',
+        type: SqfType.integer,
+        properties: properties,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+        ),
+      );
+
+      properties.add(SqfColumnProperty.unique);
+
+      final String actual = column.sql;
+      const String expected = '`column_name` INTEGER NOT NULL '
+          'REFERENCES `foreign_table_name`(`foreign_column_name`)';
+      expect(actual, expected);
+    });
   });
 
   group('sqfTypes', () {
@@ -444,6 +467,118 @@ void main() {
       column.rename('table_name', 'new_col_name');
 
       expect(column.name, 'new_col_name');
+    });
+  });
+
+  group('copyWith', () {
+    test('creates a new instance', () {
+      final SqfColumn column = SqfColumn(
+        name: 'name',
+        type: SqfType.integer,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+          onUpdate: SqfAction.noAction,
+          onDelete: SqfAction.noAction,
+        ),
+        properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+        defaultValue: 0,
+      );
+
+      final SqfColumn cloned = column.copyWith();
+
+      expect(column == cloned, false);
+    });
+
+    test('creates a clone', () {
+      final SqfColumn column = SqfColumn(
+        name: 'name',
+        type: SqfType.integer,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+          onUpdate: SqfAction.noAction,
+          onDelete: SqfAction.noAction,
+        ),
+        properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+        defaultValue: 0,
+      );
+
+      final SqfColumn cloned = column.copyWith();
+
+      expect(column.name, cloned.name);
+      expect(column.type, cloned.type);
+      expect(column.properties, cloned.properties);
+      expect(column.defaultValue, cloned.defaultValue);
+      expect(
+        column.references?.foreignTableName,
+        cloned.references?.foreignTableName,
+      );
+      expect(
+        column.references?.foreignColumnName,
+        cloned.references?.foreignColumnName,
+      );
+      expect(column.references?.onUpdate, cloned.references?.onUpdate);
+      expect(column.references?.onDelete, cloned.references?.onDelete);
+    });
+
+    test('replaces given attributes', () {
+      final SqfColumn column = SqfColumn(
+        name: 'name',
+        type: SqfType.integer,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+          onUpdate: SqfAction.noAction,
+          onDelete: SqfAction.noAction,
+        ),
+        properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+        defaultValue: 0,
+      );
+
+      final SqfColumn cloned = column.copyWith(
+        name: 'test',
+        type: SqfType.text,
+        references: SqfReferences(
+          foreignTableName: 'test',
+          foreignColumnName: 'test',
+          onUpdate: SqfAction.cascade,
+          onDelete: SqfAction.cascade,
+        ),
+        properties: <SqfColumnProperty>[SqfColumnProperty.notNull],
+        defaultValue: 1,
+      );
+
+      expect(cloned.name, 'test');
+      expect(cloned.type, SqfType.text);
+      expect(cloned.properties, <SqfColumnProperty>[SqfColumnProperty.notNull]);
+      expect(cloned.defaultValue, 1);
+      expect(cloned.references?.foreignTableName, 'test');
+      expect(cloned.references?.foreignColumnName, 'test');
+      expect(cloned.references?.onUpdate, SqfAction.cascade);
+      expect(cloned.references?.onDelete, SqfAction.cascade);
+    });
+
+    test('clones mutable members', () {
+      final List<SqfColumnProperty> properties = <SqfColumnProperty>[];
+
+      final SqfColumn column = SqfColumn(
+        name: 'name',
+        type: SqfType.integer,
+        references: SqfReferences(
+          foreignTableName: 'foreign_table_name',
+          foreignColumnName: 'foreign_column_name',
+          onUpdate: SqfAction.noAction,
+          onDelete: SqfAction.noAction,
+        ),
+        properties: properties,
+        defaultValue: 0,
+      );
+
+      final SqfColumn cloned = column.copyWith();
+      properties.add(SqfColumnProperty.unique);
+
+      expect(cloned.properties, <SqfColumnProperty>[]);
     });
   });
 }

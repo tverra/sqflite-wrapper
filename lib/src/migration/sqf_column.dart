@@ -15,7 +15,9 @@ class SqfColumn {
     dynamic defaultValue,
   })  : _name = name,
         _type = type,
-        _properties = properties,
+        _properties = properties != null
+            ? List<SqfColumnProperty>.from(properties)
+            : null,
         _references = references,
         _defaultValue = defaultValue;
 
@@ -28,8 +30,10 @@ class SqfColumn {
   }
 
   List<SqfColumnProperty>? get properties {
-    if (_properties == null) return null;
-    return List<SqfColumnProperty>.from(_properties!);
+    final List<SqfColumnProperty>? thisProperties = _properties;
+
+    if (thisProperties == null) return null;
+    return List<SqfColumnProperty>.from(thisProperties);
   }
 
   SqfReferences? get references {
@@ -126,6 +130,27 @@ class SqfColumn {
         'ALTER TABLE `$tableName` RENAME COLUMN `$_name` TO `$newName`;';
     _name = newName;
     return sql;
+  }
+
+  SqfColumn copyWith({
+    String? name,
+    SqfType? type,
+    SqfReferences? references,
+    List<SqfColumnProperty>? properties,
+    dynamic defaultValue,
+  }) {
+    final List<SqfColumnProperty>? thisProperties = _properties;
+
+    return SqfColumn(
+      name: name ?? _name,
+      type: type ?? _type,
+      references: references ?? _references?.copyWith(),
+      properties: properties ??
+          (thisProperties != null
+              ? List<SqfColumnProperty>.from(thisProperties)
+              : null),
+      defaultValue: defaultValue ?? _defaultValue,
+    );
   }
 }
 

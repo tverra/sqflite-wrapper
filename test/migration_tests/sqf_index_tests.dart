@@ -61,6 +61,21 @@ void main() {
 
       expect(index.sql, expected);
     });
+
+    test('creates clone of mutable members', () {
+      final List<String> columnNames = <String>['col1'];
+      final SqfIndex index = SqfIndex(
+        tableName: 'table_name',
+        columnNames: columnNames,
+      );
+
+      columnNames.add('col2');
+
+      expect(
+        index.sql,
+        'CREATE INDEX `idx_table_name_col1` ON `table_name` (`col1`);',
+      );
+    });
   });
 
   group('drop statement', () {
@@ -76,7 +91,7 @@ void main() {
     });
   });
 
-  group('copy with', () {
+  group('copyWith', () {
     test('is copied with only given values changed', () {
       SqfIndex index = SqfIndex(
         tableName: 'table_name',
@@ -116,6 +131,35 @@ void main() {
         index.sql,
         'CREATE INDEX `new_index_name` '
         'ON `new_table_name` (`new_col`);',
+      );
+    });
+
+    test('creates a new instance', () {
+      final SqfIndex index = SqfIndex(
+        tableName: 'table_name',
+        columnNames: <String>['col'],
+        unique: true,
+      );
+
+      final SqfIndex cloned = index.copyWith();
+
+      expect(index == cloned, false);
+    });
+
+    test('creates clone of mutable members', () {
+      final List<String> columnNames = <String>['col1'];
+      final SqfIndex index = SqfIndex(
+        tableName: 'table_name',
+        columnNames: columnNames,
+      );
+
+      final SqfIndex clone = index.copyWith();
+
+      columnNames.add('col2');
+
+      expect(
+        clone.sql,
+        'CREATE INDEX `idx_table_name_col1` ON `table_name` (`col1`);',
       );
     });
   });

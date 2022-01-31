@@ -11,7 +11,7 @@ class SqfIndex {
     required List<String> columnNames,
     this.unique = false,
     String? name,
-  })  : _columnNames = columnNames,
+  })  : _columnNames = List<String>.from(columnNames).toList(),
         assert(columnNames.isNotEmpty, "Column list can't be empty") {
     final StringBuffer indexName = StringBuffer('idx_$tableName');
 
@@ -52,7 +52,7 @@ class SqfIndex {
   }) {
     return SqfIndex(
       tableName: tableName ?? this.tableName,
-      columnNames: columnNames ?? _columnNames,
+      columnNames: columnNames ?? List<String>.from(_columnNames).toList(),
       unique: unique ?? this.unique,
       name: name ?? this.name,
     );

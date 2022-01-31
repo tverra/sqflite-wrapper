@@ -144,4 +144,56 @@ void main() {
       });
     });
   });
+
+  group('copyWith', () {
+    test('creates a new instance', () {
+      final SqfReferences references = SqfReferences(
+        foreignTableName: 'foreignTableName',
+        foreignColumnName: 'foreignColumnName',
+        onUpdate: SqfAction.noAction,
+        onDelete: SqfAction.noAction,
+      );
+
+      final SqfReferences cloned = references.copyWith();
+
+      expect(references == cloned, false);
+    });
+
+    test('creates a clone', () {
+      final SqfReferences references = SqfReferences(
+        foreignTableName: 'foreignTableName',
+        foreignColumnName: 'foreignColumnName',
+        onUpdate: SqfAction.noAction,
+        onDelete: SqfAction.noAction,
+      );
+
+      final SqfReferences cloned = references.copyWith();
+
+      expect(references.foreignTableName, cloned.foreignTableName);
+      expect(references.foreignColumnName, cloned.foreignColumnName);
+      expect(references.onUpdate, cloned.onUpdate);
+      expect(references.onDelete, cloned.onDelete);
+    });
+
+    test('replaces given attributes', () {
+      final SqfReferences references = SqfReferences(
+        foreignTableName: 'foreignTableName',
+        foreignColumnName: 'foreignColumnName',
+        onUpdate: SqfAction.noAction,
+        onDelete: SqfAction.noAction,
+      );
+
+      final SqfReferences cloned = references.copyWith(
+        foreignTableName: 'test',
+        foreignColumnName: 'test',
+        onUpdate: SqfAction.cascade,
+        onDelete: SqfAction.cascade,
+      );
+
+      expect(cloned.foreignTableName, 'test');
+      expect(cloned.foreignColumnName, 'test');
+      expect(cloned.onUpdate, SqfAction.cascade);
+      expect(cloned.onDelete, SqfAction.cascade);
+    });
+  });
 }

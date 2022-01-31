@@ -11,7 +11,7 @@ class SqfTable {
     List<String>? unique,
   })  : _name = name,
         _columns = columns,
-        _unique = unique;
+        _unique = unique != null ? List<String>.from(unique).toList() : null;
 
   String get create {
     assert(_columns.isNotEmpty, 'At least one column is required');
@@ -57,6 +57,14 @@ class SqfTable {
 
   List<SqfColumn> get columns {
     return _columns;
+  }
+
+  List<String>? get unique {
+    final List<String>? thisUnique = _unique;
+
+    if (thisUnique == null) return null;
+
+    return List<String>.from(thisUnique).toList();
   }
 
   String rename(String newName) {
@@ -118,5 +126,20 @@ class SqfTable {
     _columns.remove(column);
 
     return column.drop(_name);
+  }
+
+  SqfTable copyWith({
+    String? name,
+    List<SqfColumn>? columns,
+    List<String>? unique,
+  }) {
+    final List<String>? thisUnique = _unique;
+
+    return SqfTable(
+      name: name ?? _name,
+      columns: columns ?? _columns.map((SqfColumn c) => c.copyWith()).toList(),
+      unique: unique ??
+          (thisUnique != null ? List<String>.from(thisUnique).toList() : null),
+    );
   }
 }
