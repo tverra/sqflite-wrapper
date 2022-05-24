@@ -70,8 +70,12 @@ class SqfFunction {
     _buildSql('COALESCE', params, alias, escapeNames);
   }
 
-  void _buildSql(String function, List<String> params,
-      [String? alias, bool escapeNames = true]) {
+  void _buildSql(
+    String function,
+    List<String> params, [
+    String? alias,
+    bool escapeNames = true,
+  ]) {
     final StringBuffer buffer = StringBuffer();
 
     buffer.write('$function(');

@@ -29,58 +29,73 @@ void main() {
     });
 
     test('parentTableName is asserted not null', () {
-      expect(() {
-        Preload(
-          parentFKey: 'parent_fkey',
-          childTable: 'child_table_name',
-          childKey: 'child_pkey',
-          parentColumns: _parentColumns,
-        );
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          Preload(
+            parentFKey: 'parent_fkey',
+            childTable: 'child_table_name',
+            childKey: 'child_pkey',
+            parentColumns: _parentColumns,
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('parentFKey is asserted not null', () {
-      expect(() {
-        Preload(
-          parentTable: 'parent_table_name',
-          childTable: 'child_table_name',
-          childKey: 'child_pkey',
-          parentColumns: _parentColumns,
-        );
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          Preload(
+            parentTable: 'parent_table_name',
+            childTable: 'child_table_name',
+            childKey: 'child_pkey',
+            parentColumns: _parentColumns,
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('childTableName is asserted not null', () {
-      expect(() {
-        Preload(
-          parentTable: 'parent_table_name',
-          parentFKey: 'parent_fkey',
-          childKey: 'child_pkey',
-          parentColumns: _parentColumns,
-        );
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          Preload(
+            parentTable: 'parent_table_name',
+            parentFKey: 'parent_fkey',
+            childKey: 'child_pkey',
+            parentColumns: _parentColumns,
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('childFKey is asserted not null', () {
-      expect(() {
-        Preload(
-          parentTable: 'parent_table_name',
-          parentFKey: 'parent_fkey',
-          childTable: 'child_table_name',
-          parentColumns: _parentColumns,
-        );
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          Preload(
+            parentTable: 'parent_table_name',
+            parentFKey: 'parent_fkey',
+            childTable: 'child_table_name',
+            parentColumns: _parentColumns,
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('parentColumns is asserted not null', () {
-      expect(() {
-        Preload(
-          parentTable: 'parent_table_name',
-          parentFKey: 'parent_fkey',
-          childTable: 'child_table_name',
-          childKey: 'child_pkey',
-        );
-      }, throwsA(isA<AssertionError>()));
+      expect(
+        () {
+          Preload(
+            parentTable: 'parent_table_name',
+            parentFKey: 'parent_fkey',
+            childTable: 'child_table_name',
+            childKey: 'child_pkey',
+          );
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('adding preload increments number of preloads', () {
@@ -166,9 +181,12 @@ void main() {
       );
 
       expect(preload.columns, <String>[
-        '`parent_table_name`.`parent_column1` AS `_parent_table_name_parent_column1`',
-        '`parent_table_name`.`parent_column2` AS `_parent_table_name_parent_column2`',
-        '`parent_table_name`.`parent_column3` AS `_parent_table_name_parent_column3`',
+        '`parent_table_name`.`parent_column1` AS ' +
+            '`_parent_table_name_parent_column1`',
+        '`parent_table_name`.`parent_column2` AS ' +
+            '`_parent_table_name_parent_column2`',
+        '`parent_table_name`.`parent_column3` AS ' +
+            '`_parent_table_name_parent_column3`',
       ]);
     });
 
@@ -258,15 +276,24 @@ void main() {
       );
 
       expect(preload.columns, <String>[
-        '`parent_table_name1`.`parent_column1` AS `_parent_table_name1_parent_column1`',
-        '`parent_table_name1`.`parent_column2` AS `_parent_table_name1_parent_column2`',
-        '`parent_table_name1`.`parent_column3` AS `_parent_table_name1_parent_column3`',
-        '`parent_table_name2`.`parent_column1` AS `_parent_table_name2_parent_column1`',
-        '`parent_table_name2`.`parent_column2` AS `_parent_table_name2_parent_column2`',
-        '`parent_table_name2`.`parent_column3` AS `_parent_table_name2_parent_column3`',
-        '`parent_table_name3`.`parent_column1` AS `_parent_table_name3_parent_column1`',
-        '`parent_table_name3`.`parent_column2` AS `_parent_table_name3_parent_column2`',
-        '`parent_table_name3`.`parent_column3` AS `_parent_table_name3_parent_column3`'
+        '`parent_table_name1`.`parent_column1` AS ' +
+            '`_parent_table_name1_parent_column1`',
+        '`parent_table_name1`.`parent_column2` AS ' +
+            '`_parent_table_name1_parent_column2`',
+        '`parent_table_name1`.`parent_column3` AS ' +
+            '`_parent_table_name1_parent_column3`',
+        '`parent_table_name2`.`parent_column1` AS ' +
+            '`_parent_table_name2_parent_column1`',
+        '`parent_table_name2`.`parent_column2` AS ' +
+            '`_parent_table_name2_parent_column2`',
+        '`parent_table_name2`.`parent_column3` AS ' +
+            '`_parent_table_name2_parent_column3`',
+        '`parent_table_name3`.`parent_column1` AS ' +
+            '`_parent_table_name3_parent_column1`',
+        '`parent_table_name3`.`parent_column2` AS ' +
+            '`_parent_table_name3_parent_column2`',
+        '`parent_table_name3`.`parent_column3` AS ' +
+            '`_parent_table_name3_parent_column3`'
       ]);
     });
 
@@ -281,10 +308,11 @@ void main() {
       );
 
       expect(
-          preload.join.statement,
-          'LEFT JOIN `parent_table_name` '
-          'ON `parent_table_name`.`parent_fkey` = '
-          '`child_table_name`.`child_pkey`');
+        preload.join.statement,
+        'LEFT JOIN `parent_table_name` '
+        'ON `parent_table_name`.`parent_fkey` = '
+        '`child_table_name`.`child_pkey`',
+      );
     });
 
     test('adding multiple preloads adds multiple left joins', () {

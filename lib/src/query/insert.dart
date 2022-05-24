@@ -25,12 +25,14 @@ class Insert {
     if (upsertConflictValues != null || upsertAction != null) {
       if (conflictAlgorithm != null) {
         throw ArgumentError(
-            <String>["conflict algorithm can't be used on upsert"]);
+          <String>["conflict algorithm can't be used on upsert"],
+        );
       }
       if (upsertConflictValues == null || upsertAction == null) {
-        throw ArgumentError(<String>[
-          'Both upsertConflictValues and upsertAction need to needs to be defined'
-        ]);
+        const String errorMessage =
+            'Both upsertConflictValues and upsertAction '
+            'need to needs to be defined';
+        throw ArgumentError(<String>[errorMessage]);
       }
       if (!upsertAction.forUpsert) {
         throw ArgumentError(<String>['forUpsert is false']);

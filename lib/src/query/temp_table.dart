@@ -27,13 +27,17 @@ class TempTable {
     );
   }
 
-  void insertValues(Batch batch, List<int> values, {bool escapeNames = true}) {
-    for (final int value in values) {
+  void insertValues(
+    Batch batch,
+    List<dynamic> values, {
+    bool escapeNames = true,
+  }) {
+    for (final dynamic value in values) {
       batch.rawInsert(
         escapeNames
             ? 'INSERT INTO temp.`_temp_table_$identifier` VALUES (?)'
             : 'INSERT INTO temp._temp_table_$identifier VALUES (?)',
-        <int>[value],
+        <dynamic>[value],
       );
     }
   }

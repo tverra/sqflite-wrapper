@@ -5,23 +5,23 @@ class Delete {
   late final List<dynamic> args;
 
   Delete(String table, {Where? where, bool escapeNames = true}) {
-    final StringBuffer sql = StringBuffer();
+    final StringBuffer buffer = StringBuffer();
 
-    sql.write('DELETE FROM ');
+    buffer.write('DELETE FROM ');
 
     if (escapeNames) {
-      sql.write('`$table`');
+      buffer.write('`$table`');
     } else {
-      sql.write(table);
+      buffer.write(table);
     }
 
     if (where != null && where.hasClause()) {
-      sql.write(' WHERE ${where.statement}');
+      buffer.write(' WHERE ${where.statement}');
       args = where.args;
     } else {
       args = <dynamic>[];
     }
 
-    this.sql = sql.toString();
+    sql = buffer.toString();
   }
 }

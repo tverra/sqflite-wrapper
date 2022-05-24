@@ -126,19 +126,29 @@ class Join {
     );
   }
 
-  void _addJoin(String tableName, String fKeyCol, String refTable,
-      String refCol, JoinType joinType, bool escapeNames) {
+  void _addJoin(
+    String tableName,
+    String fKeyCol,
+    String refTable,
+    String refCol,
+    JoinType joinType,
+    bool escapeNames,
+  ) {
     final StringBuffer buffer = StringBuffer();
 
     buffer.write(_statement);
     if (numberOfJoins > 0) buffer.write(' ');
 
     if (escapeNames) {
-      buffer.write('${_joinTypes[joinType.index]} `$tableName` '
-          'ON `$tableName`.`$fKeyCol` = `$refTable`.`$refCol`');
+      buffer.write(
+        '${_joinTypes[joinType.index]} `$tableName` '
+        'ON `$tableName`.`$fKeyCol` = `$refTable`.`$refCol`',
+      );
     } else {
-      buffer.write('${_joinTypes[joinType.index]} $tableName '
-          'ON $tableName.$fKeyCol = $refTable.$refCol');
+      buffer.write(
+        '${_joinTypes[joinType.index]} $tableName '
+        'ON $tableName.$fKeyCol = $refTable.$refCol',
+      );
     }
 
     _statement = buffer.toString();
