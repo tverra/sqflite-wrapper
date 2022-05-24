@@ -98,8 +98,10 @@ void main() {
       where.addEquals('column2', 'value');
       where.endGroup();
 
-      expect(where.statement,
-          '`column` = ? AND (`column1` = ? AND `column2` = ?)');
+      expect(
+        where.statement,
+        '`column` = ? AND (`column1` = ? AND `column2` = ?)',
+      );
     });
 
     test('group is followed by condition', () async {

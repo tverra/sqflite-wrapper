@@ -3,7 +3,8 @@ description: A new Flutter package.
 version: 0.1.0
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=2.17.0 <3.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   flutter:
@@ -13,8 +14,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lint: ^1.6.0
-  mockito: ^5.0.0
+  lint: ^1.8.0
+  mockito: ^5.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

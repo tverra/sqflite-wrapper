@@ -2,7 +2,6 @@ include: package:lint/analysis_options_package.yaml
 
 linter:
   rules:
-    prefer_relative_imports: true
     always_specify_types: true
     avoid_redundant_argument_values: false
     missing_whitespace_between_adjacent_strings: false
