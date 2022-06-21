@@ -438,8 +438,8 @@ void main() {
     });
   });
 
-  group('drop column', () {
-    test('drop column returns statement', () {
+  group('drop columns', () {
+    test('dropping one column returns statements', () {
       final SqfTable table = SqfTable(
         name: 'table_name',
         columns: <SqfColumn>[
@@ -449,13 +449,18 @@ void main() {
         ],
       );
 
-      final String actual = table.dropColumn('col2');
-      const String expected = 'ALTER TABLE `table_name` DROP COLUMN `col2`;';
+      final List<String> actual = table.dropColumns(<String>['col2']);
+      const List<String> expected = <String>[
+        'CREATE TABLE `_new_table_name` (`col1`, `col3`);',
+        'INSERT INTO `_new_table_name` SELECT `col1`, `col3` FROM `table_name`;',
+        'DROP TABLE `table_name`;',
+        'ALTER TABLE `_new_table_name` RENAME TO `table_name`;',
+      ];
 
       expect(actual, expected);
     });
 
-    test('drop column removes column from table', () {
+    test('dropping one column removes column from table', () {
       final SqfTable table = SqfTable(
         name: 'table_name',
         columns: <SqfColumn>[
@@ -465,11 +470,94 @@ void main() {
         ],
       );
 
-      table.dropColumn('col2');
+      table.dropColumns(<String>['col2']);
       final String actual = table.create;
       const String expected = 'CREATE TABLE `table_name` (`col1`, `col3`);';
 
       expect(actual, expected);
+    });
+
+    test('dropping multiple columns returns statements', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(name: 'col1'),
+          SqfColumn(name: 'col2'),
+          SqfColumn(name: 'col3'),
+          SqfColumn(name: 'col4'),
+          SqfColumn(name: 'col5'),
+          SqfColumn(name: 'col6'),
+        ],
+      );
+
+      final List<String> actual =
+          table.dropColumns(<String>['col1', 'col3', 'col5', 'col6']);
+      const List<String> expected = <String>[
+        'CREATE TABLE `_new_table_name` (`col2`, `col4`);',
+        'INSERT INTO `_new_table_name` SELECT `col2`, `col4` FROM `table_name`;',
+        'DROP TABLE `table_name`;',
+        'ALTER TABLE `_new_table_name` RENAME TO `table_name`;',
+      ];
+
+      expect(actual, expected);
+    });
+
+    test('dropping one column removes column from table', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(name: 'col1'),
+          SqfColumn(name: 'col2'),
+          SqfColumn(name: 'col3'),
+          SqfColumn(name: 'col4'),
+          SqfColumn(name: 'col5'),
+          SqfColumn(name: 'col6'),
+        ],
+      );
+
+      table.dropColumns(<String>['col1', 'col3', 'col5', 'col6']);
+      final String actual = table.create;
+      const String expected = 'CREATE TABLE `table_name` (`col2`, `col4`);';
+
+      expect(actual, expected);
+    });
+
+    test('asserts index not primary key', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'column_name',
+            properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
+          ),
+        ],
+      );
+
+      expect(
+        () {
+          table.dropColumns(<String>['column_name']);
+        },
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('asserts index not unique', () {
+      final SqfTable table = SqfTable(
+        name: 'table_name',
+        columns: <SqfColumn>[
+          SqfColumn(
+            name: 'column_name',
+            properties: <SqfColumnProperty>[SqfColumnProperty.unique],
+          ),
+        ],
+      );
+
+      expect(
+        () {
+          table.dropColumns(<String>['column_name']);
+        },
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 

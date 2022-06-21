@@ -119,13 +119,35 @@ class SqfTable {
     return 'ALTER TABLE `$_name` ADD COLUMN ${newColumn.sql};';
   }
 
-  String dropColumn(String columnName) {
-    final SqfColumn column =
-        _columns.where((SqfColumn c) => c.name == columnName).single;
+  List<String> dropColumns(List<String> columns) {
+    final List<SqfColumn> matches =
+        _columns.where((SqfColumn c) => columns.contains(c.name)).toList();
 
-    _columns.remove(column);
+    for (final SqfColumn column in matches) {
+      assert(
+        column.properties?.contains(SqfColumnProperty.primaryKey) != true,
+        "Dropped column can't be primary key",
+      );
+      assert(
+        column.properties?.contains(SqfColumnProperty.unique) != true,
+        "Dropped column can't be unique",
+      );
 
-    return column.drop(_name);
+      _columns.remove(column);
+    }
+
+    final SqfTable newTable = SqfTable(
+      name: '_new_$_name',
+      columns: _columns,
+      unique: _unique,
+    );
+
+    return <String>[
+      newTable.create,
+      'INSERT INTO `${newTable.name}` SELECT ${newTable.columns.toCommaSeparated()} FROM `$_name`;',
+      'DROP TABLE `$_name`;',
+      'ALTER TABLE `${newTable.name}` RENAME TO `$_name`;',
+    ];
   }
 
   SqfTable copyWith({

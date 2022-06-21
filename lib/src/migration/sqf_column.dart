@@ -110,21 +110,6 @@ class SqfColumn {
     return buffer.toString();
   }
 
-  String drop(String tableName) {
-    if (_properties != null) {
-      assert(
-        !_properties!.contains(SqfColumnProperty.primaryKey),
-        "Dropped column can't be primary key",
-      );
-      assert(
-        !_properties!.contains(SqfColumnProperty.unique),
-        "Dropped column can't be unique",
-      );
-    }
-
-    return 'ALTER TABLE `$tableName` DROP COLUMN `$_name`;';
-  }
-
   String rename(String tableName, String newName) {
     final String sql =
         'ALTER TABLE `$tableName` RENAME COLUMN `$_name` TO `$newName`;';

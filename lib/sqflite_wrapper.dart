@@ -6,6 +6,7 @@
 library sqflite_wrapper;
 
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_wrapper/src/extensions.dart';
 
 part 'src/migration/sqf_column.dart';
 part 'src/migration/sqf_index.dart';

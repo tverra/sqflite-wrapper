@@ -404,46 +404,6 @@ void main() {
     });
   });
 
-  group('drop', () {
-    test('drop column returns statement', () {
-      final SqfColumn column = SqfColumn(name: 'column_name');
-
-      final String actual = column.drop('table_name');
-      const String expected =
-          'ALTER TABLE `table_name` DROP COLUMN `column_name`;';
-
-      expect(actual, expected);
-    });
-
-    test('asserts index not primary key', () {
-      final SqfColumn column = SqfColumn(
-        name: 'column_name',
-        properties: <SqfColumnProperty>[SqfColumnProperty.primaryKey],
-      );
-
-      expect(
-        () {
-          column.drop('table_name');
-        },
-        throwsA(isA<AssertionError>()),
-      );
-    });
-
-    test('asserts index not unique', () {
-      final SqfColumn column = SqfColumn(
-        name: 'column_name',
-        properties: <SqfColumnProperty>[SqfColumnProperty.unique],
-      );
-
-      expect(
-        () {
-          column.drop('table_name');
-        },
-        throwsA(isA<AssertionError>()),
-      );
-    });
-  });
-
   group('rename', () {
     test('rename column returns statement', () {
       final SqfColumn column = SqfColumn(
