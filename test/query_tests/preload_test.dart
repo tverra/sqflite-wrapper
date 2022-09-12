@@ -2,10 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
 void main() {
-  late List<String> _parentColumns;
+  late List<String> setupParentColumns;
 
   setUp(() async {
-    _parentColumns = <String>[
+    setupParentColumns = <String>[
       'parent_column1',
       'parent_column2',
       'parent_column3',
@@ -35,7 +35,7 @@ void main() {
             parentFKey: 'parent_fkey',
             childTable: 'child_table_name',
             childKey: 'child_pkey',
-            parentColumns: _parentColumns,
+            parentColumns: setupParentColumns,
           );
         },
         throwsA(isA<AssertionError>()),
@@ -49,7 +49,7 @@ void main() {
             parentTable: 'parent_table_name',
             childTable: 'child_table_name',
             childKey: 'child_pkey',
-            parentColumns: _parentColumns,
+            parentColumns: setupParentColumns,
           );
         },
         throwsA(isA<AssertionError>()),
@@ -63,7 +63,7 @@ void main() {
             parentTable: 'parent_table_name',
             parentFKey: 'parent_fkey',
             childKey: 'child_pkey',
-            parentColumns: _parentColumns,
+            parentColumns: setupParentColumns,
           );
         },
         throwsA(isA<AssertionError>()),
@@ -77,7 +77,7 @@ void main() {
             parentTable: 'parent_table_name',
             parentFKey: 'parent_fkey',
             childTable: 'child_table_name',
-            parentColumns: _parentColumns,
+            parentColumns: setupParentColumns,
           );
         },
         throwsA(isA<AssertionError>()),
@@ -104,7 +104,7 @@ void main() {
         parentFKey: 'parent_fkey',
         childTable: 'child_table_name',
         childKey: 'child_pkey',
-        parentColumns: _parentColumns,
+        parentColumns: setupParentColumns,
       );
 
       expect(preload.numberOfPreLoads, 1);
@@ -122,7 +122,7 @@ void main() {
         parentFKey: 'parent_fkey',
         childTable: 'child_table_name',
         childKey: 'child_pkey',
-        parentColumns: _parentColumns,
+        parentColumns: setupParentColumns,
       );
 
       expect(preload.hasClause(), true);
@@ -137,7 +137,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       expect(preload.numberOfPreLoads, 1);
     });
@@ -150,21 +150,21 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name2',
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name3',
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(preload.numberOfPreLoads, 3);
@@ -177,7 +177,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(preload.columns, <String>[
@@ -197,7 +197,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
         escapeNames: false,
       );
 
@@ -215,7 +215,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(
@@ -236,7 +236,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
         escapeNames: false,
       );
 
@@ -258,21 +258,21 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name2',
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name3',
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(preload.columns, <String>[
@@ -304,7 +304,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(
@@ -322,21 +322,21 @@ void main() {
         'parent_fkey',
         'child_table_name1',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name2',
         'parent_fkey',
         'child_table_name2',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
       preload.add(
         'parent_table_name3',
         'parent_fkey',
         'child_table_name3',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
       );
 
       expect(
@@ -360,7 +360,7 @@ void main() {
         'parent_fkey',
         'child_table_name',
         'child_pkey',
-        _parentColumns,
+        setupParentColumns,
         escapeNames: false,
       );
 

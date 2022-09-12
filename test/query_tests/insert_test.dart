@@ -3,10 +3,10 @@ import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
 void main() {
-  late Map<String, dynamic> _map;
+  late Map<String, dynamic> setupMap;
 
   setUp(() {
-    _map = <String, dynamic>{'val1': 1, 'val2': 2, 'val3': 3};
+    setupMap = <String, dynamic>{'val1': 1, 'val2': 2, 'val3': 3};
   });
 
   group('constructor', () {
@@ -22,7 +22,7 @@ void main() {
 
   group('table', () {
     test('table is given table value', () {
-      final Insert insert = Insert('table_name', _map);
+      final Insert insert = Insert('table_name', setupMap);
       expect(
         insert.sql,
         'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('table name can be empty string', () {
-      final Insert insert = Insert('', _map);
+      final Insert insert = Insert('', setupMap);
       expect(
         insert.sql,
         'INSERT INTO `` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
@@ -38,7 +38,7 @@ void main() {
     });
 
     test('escaping names can be disabled', () {
-      final Insert insert = Insert('table_name', _map, escapeNames: false);
+      final Insert insert = Insert('table_name', setupMap, escapeNames: false);
       expect(
         insert.sql,
         'INSERT INTO table_name (val1, val2, val3) VALUES (?, ?, ?)',
@@ -48,7 +48,7 @@ void main() {
 
   group('values', () {
     test('values are added to query', () {
-      final Insert insert = Insert('table_name', _map);
+      final Insert insert = Insert('table_name', setupMap);
 
       expect(
         insert.sql,
@@ -113,7 +113,7 @@ void main() {
     test('does add rollback algorithm if given', () {
       Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.rollback,
       );
       expect(
@@ -124,7 +124,7 @@ void main() {
 
       insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.abort,
       );
       expect(
@@ -133,8 +133,11 @@ void main() {
         'VALUES (?, ?, ?)',
       );
 
-      insert =
-          Insert('table_name', _map, conflictAlgorithm: ConflictAlgorithm.fail);
+      insert = Insert(
+        'table_name',
+        setupMap,
+        conflictAlgorithm: ConflictAlgorithm.fail,
+      );
       expect(
         insert.sql,
         'INSERT OR FAIL INTO `table_name` (`val1`, `val2`, `val3`) '
@@ -143,7 +146,7 @@ void main() {
 
       insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
       expect(
@@ -154,7 +157,7 @@ void main() {
 
       insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       expect(
@@ -165,7 +168,8 @@ void main() {
     });
 
     test('conflict algorithm is not added if null', () {
-      final Insert insert = Insert('table_name', _map, conflictAlgorithm: null);
+      final Insert insert =
+          Insert('table_name', setupMap, conflictAlgorithm: null);
       expect(
         insert.sql,
         'INSERT INTO `table_name` (`val1`, `val2`, `val3`) VALUES (?, ?, ?)',
@@ -175,7 +179,7 @@ void main() {
     test('escaping names can be disabled', () {
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.rollback,
         escapeNames: false,
       );
@@ -191,7 +195,7 @@ void main() {
     test('does add row id constraint if given', () {
       final Insert insert = Insert(
         'table',
-        _map,
+        setupMap,
         rowIdConstraint: Where(
           col: 'col',
           val: 'val',
@@ -215,7 +219,7 @@ void main() {
         combinator: WhereCombinator.or,
       );
 
-      final Insert insert = Insert('table', _map, rowIdConstraint: where);
+      final Insert insert = Insert('table', setupMap, rowIdConstraint: where);
 
       expect(
         insert.sql,
@@ -229,7 +233,7 @@ void main() {
     test('table is added to condition', () {
       final Insert insert = Insert(
         'table',
-        _map,
+        setupMap,
         rowIdConstraint: Where(
           table: 'table',
           col: 'col',
@@ -248,7 +252,7 @@ void main() {
     test('condition with no args is added', () {
       final Insert insert = Insert(
         'table',
-        _map,
+        setupMap,
         rowIdConstraint: Where(col: 'col', not: true),
       );
 
@@ -263,7 +267,7 @@ void main() {
     test('does not add empty constraint', () {
       final Insert insert = Insert(
         'table',
-        _map,
+        setupMap,
         rowIdConstraint: Where(),
       );
 
@@ -295,7 +299,7 @@ void main() {
     test('escaping names can be disabled', () {
       final Insert insert = Insert(
         'table',
-        _map,
+        setupMap,
         rowIdConstraint: Where(
           col: 'col',
           val: 'val',
@@ -320,7 +324,7 @@ void main() {
         () {
           Insert(
             'table_name',
-            _map,
+            setupMap,
             conflictAlgorithm: ConflictAlgorithm.replace,
             upsertConflictValues: <String>['col'],
           );
@@ -334,9 +338,9 @@ void main() {
         () {
           Insert(
             'table_name',
-            _map,
+            setupMap,
             conflictAlgorithm: ConflictAlgorithm.replace,
-            upsertAction: Update.forUpsert(_map),
+            upsertAction: Update.forUpsert(setupMap),
           );
         },
         throwsA(isA<ArgumentError>()),
@@ -348,9 +352,9 @@ void main() {
         () {
           Insert(
             'table_name',
-            _map,
+            setupMap,
             upsertConflictValues: null,
-            upsertAction: Update.forUpsert(_map),
+            upsertAction: Update.forUpsert(setupMap),
           );
         },
         throwsA(isA<ArgumentError>()),
@@ -362,7 +366,7 @@ void main() {
         () {
           Insert(
             'table_name',
-            _map,
+            setupMap,
             upsertConflictValues: <String>['col'],
             upsertAction: null,
           );
@@ -376,9 +380,9 @@ void main() {
         () {
           Insert(
             'table_name',
-            _map,
+            setupMap,
             conflictAlgorithm: ConflictAlgorithm.replace,
-            upsertAction: Update('table_name', _map),
+            upsertAction: Update('table_name', setupMap),
           );
         },
         throwsA(isA<ArgumentError>()),
@@ -386,10 +390,10 @@ void main() {
     });
 
     test('upsert statement is created', () {
-      final Update update = Update.forUpsert(_map);
+      final Update update = Update.forUpsert(setupMap);
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>['val1'],
         upsertAction: update,
       );
@@ -404,10 +408,10 @@ void main() {
     });
 
     test('upsert statement is created with multiple upsertConflictValues', () {
-      final Update update = Update.forUpsert(_map);
+      final Update update = Update.forUpsert(setupMap);
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>['val1', 'val2', 'val3'],
         upsertAction: update,
       );
@@ -422,10 +426,10 @@ void main() {
     });
 
     test('upsert statement is created with no upsertConflictValues', () {
-      final Update update = Update.forUpsert(_map);
+      final Update update = Update.forUpsert(setupMap);
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>[],
         upsertAction: update,
       );
@@ -440,12 +444,12 @@ void main() {
 
     test('upsert statement is created with where on update', () {
       final Update update = Update.forUpsert(
-        _map,
+        setupMap,
         where: Where(table: 'table', col: 'col', val: 'val'),
       );
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>['val1'],
         upsertAction: update,
       );
@@ -462,12 +466,12 @@ void main() {
 
     test('upsert statement is created with conflict algorithm on update', () {
       final Update update = Update.forUpsert(
-        _map,
+        setupMap,
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>['val1'],
         upsertAction: update,
       );
@@ -482,10 +486,10 @@ void main() {
     });
 
     test('escaping names can be disabled', () {
-      final Update update = Update.forUpsert(_map, escapeNames: false);
+      final Update update = Update.forUpsert(setupMap, escapeNames: false);
       final Insert insert = Insert(
         'table_name',
-        _map,
+        setupMap,
         upsertConflictValues: <String>['val1'],
         upsertAction: update,
         escapeNames: false,
