@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class SqfFunction {
   late final String sql;
@@ -48,7 +48,7 @@ class SqfFunction {
     bool escapeNames = true,
   }) {
     final List<String> params = <String>[
-      if (escapeNames) '`$param`' else param
+      if (escapeNames) '`$param`' else param,
     ];
 
     alias = alias == null ? null : (escapeNames ? '`$alias`' : alias);

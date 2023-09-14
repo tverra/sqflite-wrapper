@@ -1,10 +1,10 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class Join {
   final List<String> _joinTypes = <String>[
     'INNER JOIN',
     'LEFT JOIN',
-    'CROSS JOIN'
+    'CROSS JOIN',
   ];
 
   int _numberOfJoins = 0;
@@ -16,6 +16,7 @@ class Join {
     String? refTableName,
     String? refKey,
     JoinType? type,
+    String? alias,
     bool escapeNames = true,
   }) {
     if (tableName != null ||
@@ -33,6 +34,7 @@ class Join {
           fKey!,
           refTableName!,
           refKey!,
+          alias: alias,
           escapeNames: escapeNames,
         );
       } else if (type == JoinType.innerJoin) {
@@ -41,6 +43,7 @@ class Join {
           fKey!,
           refTableName!,
           refKey!,
+          alias: alias,
           escapeNames: escapeNames,
         );
       } else if (type == JoinType.crossJoin) {
@@ -49,6 +52,7 @@ class Join {
           fKey!,
           refTableName!,
           refKey!,
+          alias: alias,
           escapeNames: escapeNames,
         );
       } else {
@@ -57,6 +61,7 @@ class Join {
           fKey!,
           refTableName!,
           refKey!,
+          alias: alias,
           escapeNames: escapeNames,
         );
       }
@@ -80,6 +85,7 @@ class Join {
     String fKey,
     String refTableName,
     String refKey, {
+    String? alias,
     bool escapeNames = true,
   }) {
     _addJoin(
@@ -88,6 +94,7 @@ class Join {
       refTableName,
       refKey,
       JoinType.innerJoin,
+      alias,
       escapeNames,
     );
   }
@@ -97,6 +104,7 @@ class Join {
     String fKey,
     String refTableName,
     String refKey, {
+    String? alias,
     bool escapeNames = true,
   }) {
     _addJoin(
@@ -105,6 +113,7 @@ class Join {
       refTableName,
       refKey,
       JoinType.leftJoin,
+      alias,
       escapeNames,
     );
   }
@@ -114,6 +123,7 @@ class Join {
     String fKey,
     String refTableName,
     String refKey, {
+    String? alias,
     bool escapeNames = true,
   }) {
     _addJoin(
@@ -122,6 +132,7 @@ class Join {
       refTableName,
       refKey,
       JoinType.crossJoin,
+      alias,
       escapeNames,
     );
   }
@@ -132,6 +143,7 @@ class Join {
     String refTable,
     String refCol,
     JoinType joinType,
+    String? alias,
     bool escapeNames,
   ) {
     final StringBuffer buffer = StringBuffer();
@@ -140,15 +152,23 @@ class Join {
     if (numberOfJoins > 0) buffer.write(' ');
 
     if (escapeNames) {
+      buffer.write('${_joinTypes[joinType.index]} `$tableName` ');
+
+      if (alias != null) {
+        buffer.write('AS `$alias` ');
+      }
+
       buffer.write(
-        '${_joinTypes[joinType.index]} `$tableName` '
-        'ON `$tableName`.`$fKeyCol` = `$refTable`.`$refCol`',
+        'ON `${alias ?? tableName}`.`$fKeyCol` = `$refTable`.`$refCol`',
       );
     } else {
-      buffer.write(
-        '${_joinTypes[joinType.index]} $tableName '
-        'ON $tableName.$fKeyCol = $refTable.$refCol',
-      );
+      buffer.write('${_joinTypes[joinType.index]} $tableName ');
+
+      if (alias != null) {
+        buffer.write('AS $alias ');
+      }
+
+      buffer.write('ON ${alias ?? tableName}.$fKeyCol = $refTable.$refCol');
     }
 
     _statement = buffer.toString();

@@ -130,7 +130,7 @@ void main() {
   });
 
   group('add', () {
-    test('addingPreloadIncrementsNumberOfPreloads', () {
+    test('adding one preload increments number of preloads', () {
       final Preload preload = Preload();
       preload.add(
         'parent_table_name',
@@ -142,7 +142,7 @@ void main() {
       expect(preload.numberOfPreLoads, 1);
     });
 
-    test('addingPreloadsIncrementsNumberOfPreloads', () {
+    test('adding multiple preloads increments number of preloads', () {
       final Preload preload = Preload();
 
       preload.add(
@@ -205,6 +205,24 @@ void main() {
         'parent_table_name.parent_column1 AS _parent_table_name_parent_column1',
         'parent_table_name.parent_column2 AS _parent_table_name_parent_column2',
         'parent_table_name.parent_column3 AS _parent_table_name_parent_column3',
+      ]);
+    });
+
+    test('custom alias is added to column names', () {
+      final Preload preload = Preload();
+      preload.add(
+        'parent_table_name',
+        'parent_fkey',
+        'child_table_name',
+        'child_pkey',
+        setupParentColumns,
+        alias: 'alias',
+      );
+
+      expect(preload.columns, <String>[
+        '`alias`.`parent_column1` AS `_alias_parent_column1`',
+        '`alias`.`parent_column2` AS `_alias_parent_column2`',
+        '`alias`.`parent_column3` AS `_alias_parent_column3`',
       ]);
     });
 
@@ -293,7 +311,7 @@ void main() {
         '`parent_table_name3`.`parent_column2` AS ' +
             '`_parent_table_name3_parent_column2`',
         '`parent_table_name3`.`parent_column3` AS ' +
-            '`_parent_table_name3_parent_column3`'
+            '`_parent_table_name3_parent_column3`',
       ]);
     });
 
@@ -371,13 +389,32 @@ void main() {
         'child_table_name.child_pkey',
       );
     });
+
+    test('alias is added to join', () {
+      final Preload preload = Preload();
+      preload.add(
+        'parent_table_name',
+        'parent_fkey',
+        'child_table_name',
+        'child_pkey',
+        setupParentColumns,
+        alias: 'alias',
+      );
+
+      expect(
+        preload.join.statement,
+        'LEFT JOIN `parent_table_name` AS `alias` '
+        'ON `alias`.`parent_fkey` = '
+        '`child_table_name`.`child_pkey`',
+      );
+    });
   });
 
   group('extract preloaded map', () {
     test('extracts preloaded value', () {
       final Map<String, dynamic> map = <String, dynamic>{
         'col': 1,
-        '_table_col': 2
+        '_table_col': 2,
       };
 
       final Map<String, dynamic>? extracted =
@@ -510,7 +547,7 @@ void main() {
     test('extracts preloaded value when names are escaped', () {
       final Map<String, dynamic> map = <String, dynamic>{
         '`col`': 1,
-        '`_table_col`': 2
+        '`_table_col`': 2,
       };
 
       final Map<String, dynamic>? extracted =
@@ -522,7 +559,7 @@ void main() {
     test('extracts preloaded value when table name is escaped', () {
       final Map<String, dynamic> map = <String, dynamic>{
         'col': 1,
-        '_table_col': 2
+        '_table_col': 2,
       };
 
       final Map<String, dynamic>? extracted =
@@ -534,7 +571,7 @@ void main() {
     test('extracts preloaded value when table and names are escaped', () {
       final Map<String, dynamic> map = <String, dynamic>{
         '`col`': 1,
-        '`_table_col`': 2
+        '`_table_col`': 2,
       };
 
       final Map<String, dynamic>? extracted =

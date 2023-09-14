@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class Query {
   late final String sql;
@@ -96,8 +96,8 @@ class Query {
     if (orderBy != null && orderBy.hasClause()) {
       query.write(' ORDER BY ${orderBy.sql}');
     }
-    if (limit != null) query.write(' LIMIT ${limit.toString()}');
-    if (offset != null) query.write(' OFFSET ${offset.toString()}');
+    if (limit != null) query.write(' LIMIT $limit');
+    if (offset != null) query.write(' OFFSET $offset');
 
     sql = query.toString();
   }

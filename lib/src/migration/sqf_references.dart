@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class SqfReferences {
   final String foreignTableName;
@@ -50,6 +50,7 @@ List<String> sqfActions = <String>[
   'SET DEFAULT',
   'CASCADE',
 ];
+
 enum SqfAction {
   noAction,
   restrict,

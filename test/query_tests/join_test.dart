@@ -199,6 +199,23 @@ void main() {
         'ON table_name.fkey = ref_table_name.ref_key',
       );
     });
+
+    test('alias can be added', () {
+      final Join join = Join();
+      join.addInnerJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        alias: 'alias',
+      );
+
+      expect(
+        join.statement,
+        'INNER JOIN `table_name` AS `alias` '
+        'ON `alias`.`fkey` = `ref_table_name`.`ref_key`',
+      );
+    });
   });
 
   group('addLeftJoin', () {
@@ -276,6 +293,23 @@ void main() {
         'ON table_name.fkey = ref_table_name.ref_key',
       );
     });
+
+    test('alias can be added', () {
+      final Join join = Join();
+      join.addLeftJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        alias: 'alias',
+      );
+
+      expect(
+        join.statement,
+        'LEFT JOIN `table_name` AS `alias` '
+        'ON `alias`.`fkey` = `ref_table_name`.`ref_key`',
+      );
+    });
   });
 
   group('addCrossJoin', () {
@@ -351,6 +385,23 @@ void main() {
         join.statement,
         'CROSS JOIN table_name '
         'ON table_name.fkey = ref_table_name.ref_key',
+      );
+    });
+
+    test('alias can be added', () {
+      final Join join = Join();
+      join.addCrossJoin(
+        'table_name',
+        'fkey',
+        'ref_table_name',
+        'ref_key',
+        alias: 'alias',
+      );
+
+      expect(
+        join.statement,
+        'CROSS JOIN `table_name` AS `alias` '
+        'ON `alias`.`fkey` = `ref_table_name`.`ref_key`',
       );
     });
   });

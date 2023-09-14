@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class Preload {
   final List<String> columns = <String>[];
@@ -11,9 +11,10 @@ class Preload {
     String? childTable,
     String? childKey,
     List<String>? parentColumns,
+    String? alias,
     bool escapeNames = true,
   }) {
-    _join = Join(escapeNames: escapeNames);
+    _join = Join();
 
     if (parentTable != null ||
         parentFKey != null ||
@@ -32,6 +33,7 @@ class Preload {
         childTable!,
         childKey!,
         parentColumns!,
+        alias: alias,
         escapeNames: escapeNames,
       );
     }
@@ -55,6 +57,7 @@ class Preload {
     String childTable,
     String childKey,
     List<String> parentColumns, {
+    String? alias,
     bool escapeNames = true,
   }) {
     _join.addLeftJoin(
@@ -62,27 +65,19 @@ class Preload {
       parentFKey,
       childTable,
       childKey,
+      alias: alias,
       escapeNames: escapeNames,
     );
     columns.addAll(
       _aliasColumns(
         parentColumns,
-        prefix: parentTable,
+        alias: alias ?? parentTable,
         escapeNames: escapeNames,
       ),
     );
 
     _numberOfPreLoads++;
   }
-
-/*
-  void addFromOtherTable(String parentTableName, String parentFKey,
-      String childTableName, String childKey, List<String> parentColumns) {
-    _join.addLeftJoin(parentTableName, parentFKey, childTableName, childKey);
-    _columns.addAll(_aliasColumns(parentColumns, parentTableName));
-
-    _numberOfPreLoads++;
-  }*/
 
   String getColumnString() {
     final StringBuffer buffer = StringBuffer();
@@ -123,7 +118,7 @@ class Preload {
   List<String> _aliasColumns(
     List<String> columns, {
     required bool escapeNames,
-    String? prefix,
+    String? alias,
   }) {
     final List<String> aliasedColumns = <String>[];
 
@@ -131,14 +126,14 @@ class Preload {
       final StringBuffer buffer = StringBuffer();
 
       if (escapeNames) {
-        if (prefix != null) buffer.write('`$prefix`.');
+        if (alias != null) buffer.write('`$alias`.');
         buffer.write('`$column` AS `');
-        if (prefix != null) buffer.write('_$prefix');
+        if (alias != null) buffer.write('_$alias');
         buffer.write('_$column`');
       } else {
-        if (prefix != null) buffer.write('$prefix.');
+        if (alias != null) buffer.write('$alias.');
         buffer.write('$column AS ');
-        if (prefix != null) buffer.write('_$prefix');
+        if (alias != null) buffer.write('_$alias');
         buffer.write('_$column');
       }
 

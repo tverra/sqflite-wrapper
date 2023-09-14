@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_wrapper/sqflite_wrapper.dart';
 
@@ -73,7 +74,7 @@ void main() {
         type: SqfType.integer,
         properties: <SqfColumnProperty>[
           SqfColumnProperty.notNull,
-          SqfColumnProperty.unique
+          SqfColumnProperty.unique,
         ],
         defaultValue: 0,
         references: SqfReferences(
@@ -239,7 +240,7 @@ void main() {
       type: SqfType.integer,
       properties: <SqfColumnProperty>[
         SqfColumnProperty.notNull,
-        SqfColumnProperty.unique
+        SqfColumnProperty.unique,
       ],
     );
 
@@ -255,7 +256,7 @@ void main() {
       type: SqfType.integer,
       properties: <SqfColumnProperty>[
         SqfColumnProperty.unique,
-        SqfColumnProperty.notNull
+        SqfColumnProperty.notNull,
       ],
     );
 
@@ -362,7 +363,38 @@ void main() {
       );
 
       final String actual = column.sql;
-      const String expected = '`column_name` DEFAULT 1.0';
+      // Doubles are implicitly converted to integers when possible, for some
+      // reason.
+      const String expected =
+          kIsWeb ? '`column_name` DEFAULT 1' : '`column_name` DEFAULT 1.0';
+
+      expect(actual, expected);
+    });
+
+    test('default value is correct for big double value', () {
+      final SqfColumn column = SqfColumn(
+        name: 'column_name',
+        defaultValue: 1234567890.0,
+      );
+
+      final String actual = column.sql;
+      // Doubles are implicitly converted to integers when possible, for some
+      // reason.
+      const String expected = kIsWeb
+          ? '`column_name` DEFAULT 1234567890'
+          : '`column_name` DEFAULT 1234567890.0';
+
+      expect(actual, expected);
+    });
+
+    test('default value is correct for double value with many decimals', () {
+      final SqfColumn column = SqfColumn(
+        name: 'column_name',
+        defaultValue: 1.123456789123450,
+      );
+
+      final String actual = column.sql;
+      const String expected = '`column_name` DEFAULT 1.12345678912345';
 
       expect(actual, expected);
     });

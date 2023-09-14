@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class TempTable {
   final String identifier;
@@ -21,7 +21,7 @@ class TempTable {
           ? 'temp.`_temp_table_$identifier`'
           : 'temp._temp_table_$identifier',
       columns: <String>[
-        if (escapeNames) '`${identifier}_value`' else '${identifier}_value'
+        if (escapeNames) '`${identifier}_value`' else '${identifier}_value',
       ],
       escapeNames: false,
     );

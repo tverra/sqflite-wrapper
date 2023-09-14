@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class OrderBy {
   final List<String> _orderTypes = <String>['ASC', 'DESC'];

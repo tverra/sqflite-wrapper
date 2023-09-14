@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class Where {
   final List<String> _whereCombinators = <String>['AND', 'OR'];
@@ -44,7 +44,7 @@ class Where {
           if (type == WhereType.sqfIn) {
             addIn(
               col!,
-              val,
+              <dynamic>[],
               table: table,
               not: not,
               combinator: combinator,
@@ -64,7 +64,7 @@ class Where {
           if (type == WhereType.sqfIn) {
             addIn(
               col!,
-              val,
+              val as List<dynamic>,
               table: table,
               not: not,
               combinator: combinator,
@@ -305,4 +305,5 @@ class Where {
 }
 
 enum WhereCombinator { and, or }
+
 enum WhereType { sqfIn, sqfIs }

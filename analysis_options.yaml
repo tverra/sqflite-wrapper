@@ -1,13 +1,5 @@
-include: package:lint/analysis_options_package.yaml
+include: ../../analysis_options.yaml
 
 linter:
   rules:
-    always_specify_types: true
-    avoid_redundant_argument_values: false
     missing_whitespace_between_adjacent_strings: false
-
-analyzer:
-  strong-mode:
-    implicit-casts: true
-  errors:
-    missing_required_param: error

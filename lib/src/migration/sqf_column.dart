@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class SqfColumn {
   String _name;
@@ -80,24 +80,24 @@ class SqfColumn {
         } else if (defaultValue is String) {
           buffer.write('"$defaultValue"');
         } else {
-          buffer.write('(${defaultValue.toString()})');
+          buffer.write('($defaultValue)');
         }
       } else {
         switch (_type!) {
           case SqfType.integer:
-            buffer.write(defaultValue.toString());
+            buffer.write('$defaultValue');
             break;
           case SqfType.text:
-            buffer.write('"${defaultValue.toString()}"');
+            buffer.write('"$defaultValue"');
             break;
           case SqfType.blob:
-            buffer.write('(${defaultValue.toString()})');
+            buffer.write('($defaultValue)');
             break;
           case SqfType.real:
-            buffer.write(defaultValue.toString());
+            buffer.write('$defaultValue');
             break;
           case SqfType.numeric:
-            buffer.write(defaultValue.toString());
+            buffer.write('$defaultValue');
             break;
         }
       }

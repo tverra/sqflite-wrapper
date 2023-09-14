@@ -1,4 +1,4 @@
-part of sqflite_wrapper;
+part of '../../sqflite_wrapper.dart';
 
 class Update {
   final List<String> _conflictValues = <String>[
@@ -6,7 +6,7 @@ class Update {
     'OR ABORT',
     'OR FAIL',
     'OR IGNORE',
-    'OR REPLACE'
+    'OR REPLACE',
   ];
   late final String sql;
   late final List<dynamic> args;
